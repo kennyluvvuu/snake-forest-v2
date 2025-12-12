@@ -1,20 +1,23 @@
 {
-  "name": "backend",
-  "module": "index.ts",
-  "type": "module",
-  "private": true,
-  "scripts": {
-    "start": "bun run src/index.ts",
-    "dev": "bun run --watch src/index.ts"
-  },
-  "devDependencies": {
-    "@types/bun": "latest"
-  },
-  "peerDependencies": {
-    "typescript": "^5"
-  },
-  "dependencies": {
-    "mongoose": "^9.0.1",
-    "zod": "^4.1.13"
-  }
+    "name": "backend",
+    "module": "index.ts",
+    "type": "module",
+    "private": true,
+    "scripts": {
+        "build-dev": "bun build ./src/index.ts --outdir ./target/dev --sourcemap=inline",
+        "build-release": "bun build ./src/index.ts --outdir ./target/release --minify",
+        "start": "bun run src/index.ts",
+        "dev": "bun run --watch src/index.ts"
+    },
+    "devDependencies": {
+        "@types/bun": "latest"
+    },
+    "peerDependencies": {
+        "typescript": "^5"
+    },
+    "dependencies": {
+        "@types/config": "^3.3.5",
+        "mongoose": "^9.0.1",
+        "zod": "^4.1.13"
+    }
 }
