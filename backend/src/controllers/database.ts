@@ -4,7 +4,7 @@ import mongoose from "mongoose";
 function connectDb(config: dbConfig) {
     try {
         mongoose.connect(
-            `mongodb://${config.host}:${config.port}/${config.name}`
+            `mongodb://${config.user}:${config.password}@${config.host}:${config.port}/${config.name}`,
         );
     } catch (err) {
         throw new Error(`Cannot connect to DB: ${err}`);

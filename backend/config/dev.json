@@ -1,0 +1,9 @@
+{
+  "dbConfig": {
+    "host": "backend-bun",
+    "port": "27017",
+    "name": "test",
+    "user": "test",
+    "password": "test"
+  }
+}
