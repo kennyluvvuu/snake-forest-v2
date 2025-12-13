@@ -9,7 +9,7 @@ import {
 import type { IAnimalController } from "../interfaces/animal.controller.interface";
 import { Animal } from "../models/animal.model";
 
-class AnimalController implements IAnimalController {
+export class AnimalController implements IAnimalController {
     async create(req: CreateAnimalReq): Promise<CreateAnimalRes> {
         const newAnimal = new Animal({
             commonName: req.commonName,
