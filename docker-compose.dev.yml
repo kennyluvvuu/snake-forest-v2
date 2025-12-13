@@ -1,26 +1,26 @@
 services:
-  backend:
-    build: backend
-    container_name: backend-bun
-    ports:
-      - "8080:8080"
-    depends_on:
-      - db
-    environment:
-      - NODE_ENV=${NODE_ENV}
-      - MONGODB_USER=${MONGODB_USER}
-      - MONGODB_PASSWD=${MONGODB_PASSWD}
-      - MONGODB_DB=${MONGODB_DB}
-    volumes:
-      - ./backend:/app
-  db:
-    image: mongo
-    container_name: mongo-db
-    ports:
-      - "27017:27017"
-    environment:
-      - MONGO_INITDB_ROOT_USERNAME=${MONGODB_USER}
-      - MONGO_INITDB_ROOT_PASSWORD=${MONGODB_PASSWD}
-      - MONGO_INITDB_DATABASE=${MONGODB_DB}
-    volumes:
-      - ./mongo-data:/data/db
+    backend:
+        build: backend
+        container_name: backend-bun
+        ports:
+            - "8080:8080"
+        depends_on:
+            - db
+        environment:
+            - NODE_ENV=${NODE_ENV}
+            - MONGODB_USER=${MONGODB_USER}
+            - MONGODB_PASSWD=${MONGODB_PASSWD}
+            - MONGODB_DB=${MONGODB_DB}
+        volumes:
+            - ./backend:/app
+    db:
+        image: mongo:latest
+        container_name: mongo-db
+        ports:
+            - "27017:27017"
+        environment:
+            - MONGO_INITDB_ROOT_USERNAME=${MONGODB_USER}
+            - MONGO_INITDB_ROOT_PASSWORD=${MONGODB_PASSWD}
+            - MONGO_INITDB_DATABASE=${MONGODB_DB}
+        volumes:
+            - ./mongo-data:/data/db
