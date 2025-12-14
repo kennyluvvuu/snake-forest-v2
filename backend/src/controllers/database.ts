@@ -1,4 +1,4 @@
-import { type dbConfig } from "../interfaces/config.interface";
+import type dbConfig from "../interfaces/config.interface";
 import mongoose from "mongoose";
 
 export function connectDb(config: dbConfig) {

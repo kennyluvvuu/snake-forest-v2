@@ -6,10 +6,10 @@ import {
     type UpdateAnimalReq,
     type UpdateAnimalRes,
 } from "../schemas/animal.schema";
-import type { IAnimalController } from "../interfaces/animal.controller.interface";
+import type IAnimalController from "../interfaces/animal.controller.interface";
 import { Animal } from "../models/animal.model";
 
-export class AnimalController implements IAnimalController {
+export default class AnimalController implements IAnimalController {
     async create(req: CreateAnimalReq): Promise<CreateAnimalRes> {
         const newAnimal = new Animal({
             commonName: req.commonName,

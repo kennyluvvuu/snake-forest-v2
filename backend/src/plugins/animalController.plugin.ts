@@ -1,7 +1,6 @@
 import type { FastifyInstance } from "fastify";
 import fp from "fastify-plugin";
-import type { IAnimalController } from "../interfaces/animal.controller.interface";
-import { AnimalController } from "../controllers/animal.controller";
+import type IAnimalController from "../interfaces/animal.controller.interface";
 
 // Dependency injection
 export default fp(

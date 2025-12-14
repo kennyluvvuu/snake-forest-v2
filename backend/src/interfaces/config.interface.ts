@@ -1,4 +1,4 @@
-export interface dbConfig {
+export default interface dbConfig {
     host: string;
     port: string;
     user: string;

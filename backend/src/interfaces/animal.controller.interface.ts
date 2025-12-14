@@ -7,7 +7,7 @@ import {
     type UpdateAnimalRes,
 } from "../schemas/animal.schema";
 
-export interface IAnimalController {
+export default interface IAnimalController {
     create: (req: CreateAnimalReq) => Promise<CreateAnimalRes>;
     get: (id: string) => Promise<GetAnimalRes>;
     getPreviews: () => Promise<Array<GetAnimalPreviewRes>>;

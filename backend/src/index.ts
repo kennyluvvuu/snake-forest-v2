@@ -8,7 +8,7 @@ import {
     validatorCompiler,
     type ZodTypeProvider,
 } from "fastify-type-provider-zod";
-import { AnimalController } from "./controllers/animal.controller";
+import AnimalController from "./controllers/animal.controller";
 
 console.log("hello lox");
 
@@ -22,6 +22,7 @@ app.setSerializerCompiler(serializerCompiler);
 async function bootstrapServer() {
     try {
         let animalController = new AnimalController();
+
         await app.register(animalControllerPlugin, {
             animalController: animalController,
         });
