@@ -8,7 +8,7 @@ export const ImageFileSchema = z.object({
     }),
     buffer: z.instanceof(Buffer),
     size: z.number().max(10 * 1024 * 1024, {
-        message: "File size must not be over 10MB",
+        message: "File size must not be over 10MB.",
     }),
 });
 

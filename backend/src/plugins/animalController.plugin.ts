@@ -4,11 +4,16 @@ import type { IAnimalController } from "../interfaces/animal.controller.interfac
 import { AnimalController } from "../controllers/animal.controller";
 
 // Dependency injection
-export default fp(async (server: FastifyInstance, options) => {
-    const animalController: IAnimalController = new AnimalController();
+export default fp(
+    async (
+        fastify: FastifyInstance,
+        options: { animalController: IAnimalController }
+    ) => {
+        const animalController: IAnimalController = options.animalController;
 
-    server.decorate("animalController", animalController);
-});
+        fastify.decorate("animalController", animalController);
+    }
+);
 
 declare module "fastify" {
     interface FastifyInstance {
