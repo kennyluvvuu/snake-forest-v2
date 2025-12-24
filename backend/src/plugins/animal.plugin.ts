@@ -6,6 +6,9 @@ const animalRoutes: FastifyPluginAsyncZod = async (fastify, options) => {
     fastify.get("/", async (request, reply) => {
         try {
             let animalList = await animalController.getPreviews();
+            if (!animalList) {
+                reply.code(404).send({ message: "Not found." });
+            }
 
             return animalList;
         } catch (e) {
@@ -25,6 +28,9 @@ const animalRoutes: FastifyPluginAsyncZod = async (fastify, options) => {
         async (request, reply) => {
             try {
                 let animal = await animalController.get(request.params.id);
+                if (!animal) {
+                    reply.code(404).send({ message: "Not found." });
+                }
 
                 return animal;
             } catch (e) {
@@ -72,6 +78,9 @@ const animalRoutes: FastifyPluginAsyncZod = async (fastify, options) => {
                     request.body,
                     request.params.id
                 );
+                if (!updatedAnimal) {
+                    reply.code(404).send({ message: "Not found." });
+                }
 
                 return updatedAnimal;
             } catch (e) {
@@ -91,7 +100,10 @@ const animalRoutes: FastifyPluginAsyncZod = async (fastify, options) => {
         },
         async (request, reply) => {
             try {
-                await animalController.delete(request.params.id);
+                let deleted = await animalController.delete(request.params.id);
+                if (!deleted) {
+                    reply.code(404).send({ message: "Not found." });
+                }
 
                 reply.code(200);
             } catch (e) {

@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const AnimalSchema = new mongoose.Schema({
+const AnimalModel = new mongoose.Schema({
     commonName: { type: String, required: true },
     morph: { type: String, required: true },
     sex: {
@@ -17,4 +17,4 @@ const AnimalSchema = new mongoose.Schema({
     description: { type: String, required: true },
 });
 
-export const Animal = mongoose.model("Animal", AnimalSchema);
+export const Animal = mongoose.model("Animal", AnimalModel);

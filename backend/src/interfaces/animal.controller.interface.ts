@@ -9,8 +9,11 @@ import {
 
 export default interface IAnimalController {
     create: (req: CreateAnimalReq) => Promise<CreateAnimalRes>;
-    get: (id: string) => Promise<GetAnimalRes>;
-    getPreviews: () => Promise<Array<GetAnimalPreviewRes>>;
-    update: (req: UpdateAnimalReq, id: string) => Promise<UpdateAnimalReq>;
-    delete: (id: string) => Promise<void>;
+    get: (id: string) => Promise<GetAnimalRes | null>;
+    getPreviews: () => Promise<Array<GetAnimalPreviewRes> | null>;
+    update: (
+        req: UpdateAnimalReq,
+        id: string
+    ) => Promise<UpdateAnimalReq | null>;
+    delete: (id: string) => Promise<boolean>;
 }
