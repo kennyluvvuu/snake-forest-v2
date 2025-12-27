@@ -15,16 +15,15 @@ console.log("hello lox");
 const app = Fasify({
     logger: true,
 }).withTypeProvider<ZodTypeProvider>();
-// setting validator compilers and serializers
+
+// setting validator compilers and serializers, for zod validator
 app.setValidatorCompiler(validatorCompiler);
 app.setSerializerCompiler(serializerCompiler);
 
 async function bootstrapServer() {
     try {
-        let animalController = new AnimalController();
-
         await app.register(animalControllerPlugin, {
-            animalController: animalController,
+            animalController: new AnimalController(),
         });
         await app.register(animalRoutes);
 
