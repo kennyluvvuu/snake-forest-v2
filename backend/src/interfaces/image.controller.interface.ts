@@ -1,7 +1,7 @@
 import type mongoose from "mongoose";
-import type { ImageFile } from "../schemas/image.schema";
+import type { SingleImageFilePart } from "../schemas/image.schema";
 
 export default interface IImageController<T> {
-  add(refId: string, images: ImageFile[]): Promise<string[] | null>;
-  updateAll(refId: string, images: ImageFile[]): Promise<string[] | null>;
+  add(refId: string, images: SingleImageFilePart[]): Promise<string[] | null>;
+  clear(refId: string): Promise<boolean>;
 }

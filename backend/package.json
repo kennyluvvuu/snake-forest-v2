@@ -16,6 +16,7 @@
         "typescript": "^5"
     },
     "dependencies": {
+        "@fastify/multipart": "^9.3.0",
         "@types/config": "^3.3.5",
         "@types/mime-types": "^3.0.1",
         "config": "^4.1.1",

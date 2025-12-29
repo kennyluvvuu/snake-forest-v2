@@ -4,16 +4,20 @@ import animalRoutes from "./plugins/animal.plugin";
 import { getConfig } from "./config/configGetter";
 import { connectDb } from "./controllers/database";
 import {
-    serializerCompiler,
-    validatorCompiler,
-    type ZodTypeProvider,
+  serializerCompiler,
+  validatorCompiler,
+  type ZodTypeProvider,
 } from "fastify-type-provider-zod";
 import AnimalController from "./controllers/animal.controller";
+import imageControllerPlugin from "./plugins/imageController.plugin";
+import ImageController from "./controllers/image.controller";
+import { Animal } from "./models/animal.model";
+import fastifyMultipart from "@fastify/multipart";
 
 console.log("hello lox");
 
 const app = Fasify({
-    logger: true,
+  logger: true,
 }).withTypeProvider<ZodTypeProvider>();
 
 // setting validator compilers and serializers, for zod validator
@@ -21,25 +25,33 @@ app.setValidatorCompiler(validatorCompiler);
 app.setSerializerCompiler(serializerCompiler);
 
 async function bootstrapServer() {
-    try {
-        await app.register(animalControllerPlugin, {
-            animalController: new AnimalController(),
-        });
-        await app.register(animalRoutes);
+  try {
+    let dbCfg = await getConfig();
+    app.log.info(dbCfg);
+    await connectDb(dbCfg);
+    await app.register(fastifyMultipart);
 
-        let dbCfg = await getConfig();
-        app.log.info(dbCfg);
-        await connectDb(dbCfg);
+    await app.register(animalControllerPlugin, {
+      animalController: new AnimalController(),
+    });
 
-        await app.listen({
-            port: 8080,
-            host: "::",
-        });
-    } catch (e) {
-        app.log.error(e);
+    await app.register(imageControllerPlugin, {
+      imageController: new ImageController(Animal, "./uploads"),
+      registerName: "animalImageController",
+    });
 
-        process.exit(1);
-    }
+    await app.register(animalRoutes);
+
+
+    await app.listen({
+      port: 8080,
+      host: "::",
+    });
+  } catch (e) {
+    app.log.error(e);
+
+    process.exit(1);
+  }
 }
 
 bootstrapServer();
