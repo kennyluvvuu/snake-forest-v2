@@ -1,15 +1,18 @@
 import { z } from "zod";
+import { Readable } from "stream";
 
-export const ImageFileSchema = z.object({
-    fieldname: z.enum(["animal"]),
-    encoding: z.string(),
-    mimetype: z.string().refine((type) => type.startsWith("image/"), {
-        message: "Invalid file type",
-    }),
-    buffer: z.instanceof(Buffer),
-    size: z.number().max(10 * 1024 * 1024, {
-        message: "File size must not be over 10MB.",
-    }),
+export const ImageFilePartSchema = z.object({
+  filename: z.string(),
+  fieldname: z.enum(["image"]),
+  encoding: z.string(),
+  mimetype: z.string().refine((type) => type.startsWith("image/"), {
+    message: "Invalid file type, check your request.",
+  }),
+  file: z.instanceof(Readable),
 });
 
-export type ImageFile = z.infer<typeof ImageFileSchema>;
+export const MultipleImageFilesSchema = z.preprocess(
+  (val) => Array.isArray(val) ? val : [val],
+  z.array(ImageFilePartSchema));
+
+export type SingleImageFilePart = z.infer<typeof ImageFilePartSchema>;

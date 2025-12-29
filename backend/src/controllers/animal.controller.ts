@@ -32,11 +32,11 @@ export default class AnimalController implements IAnimalController {
         };
     }
 
-    async get(id: string): Promise<GetAnimalRes> {
+    async get(id: string): Promise<GetAnimalRes | null> {
         const fullAnimal = await Animal.findById(id);
 
         if (!fullAnimal) {
-            throw new Error(`Could not find Animal with id: ${id}`);
+            return null;
         }
 
         return {
@@ -50,14 +50,14 @@ export default class AnimalController implements IAnimalController {
         };
     }
 
-    async getPreviews(): Promise<Array<GetAnimalPreviewRes>> {
+    async getPreviews(): Promise<Array<GetAnimalPreviewRes> | null> {
         const animalPreviews = await Animal.find().select({
             description: 0,
             images: { $slice: 1 },
         });
 
         if (!animalPreviews) {
-            throw new Error("Could not find any objects at Animal collection");
+            return null;
         }
 
         return animalPreviews.map((animalPreview) => {
@@ -72,7 +72,10 @@ export default class AnimalController implements IAnimalController {
         });
     }
 
-    async update(req: UpdateAnimalReq, id: string): Promise<UpdateAnimalRes> {
+    async update(
+        req: UpdateAnimalReq,
+        id: string
+    ): Promise<UpdateAnimalRes | null> {
         const updatedAnimal = await Animal.findByIdAndUpdate(
             id,
             {
@@ -89,7 +92,7 @@ export default class AnimalController implements IAnimalController {
         );
 
         if (!updatedAnimal) {
-            throw new Error(`Could not find Animal with id: ${id}`);
+            return null;
         }
 
         return {
@@ -103,11 +106,13 @@ export default class AnimalController implements IAnimalController {
         };
     }
 
-    async delete(id: string): Promise<void> {
+    async delete(id: string): Promise<boolean> {
         const deletedAnimal = await Animal.findByIdAndDelete(id);
 
         if (!deletedAnimal) {
-            throw new Error(`Could not find Animal with id: ${id}`);
+            return false;
         }
+
+        return true;
     }
 }
