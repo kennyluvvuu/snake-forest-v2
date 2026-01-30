@@ -41,7 +41,7 @@ const animalRoutes: FastifyPluginAsyncZod = async (fastify, options) => {
           error: e,
         });
       }
-    }
+    },
   );
 
   fastify.post(
@@ -64,7 +64,7 @@ const animalRoutes: FastifyPluginAsyncZod = async (fastify, options) => {
           error: e,
         });
       }
-    }
+    },
   );
 
   fastify.put(
@@ -79,7 +79,7 @@ const animalRoutes: FastifyPluginAsyncZod = async (fastify, options) => {
       try {
         let updatedAnimal = await animalController.update(
           request.body,
-          request.params.id
+          request.params.id,
         );
         if (!updatedAnimal) {
           reply.code(404).send({ message: "Not found." });
@@ -91,7 +91,7 @@ const animalRoutes: FastifyPluginAsyncZod = async (fastify, options) => {
           error: e,
         });
       }
-    }
+    },
   );
 
   fastify.delete(
@@ -114,50 +114,58 @@ const animalRoutes: FastifyPluginAsyncZod = async (fastify, options) => {
           error: e,
         });
       }
-    }
+    },
   );
 
-  fastify.post("/:id/images", {
-    schema: {
-      params: schemas.UrlParamsIdSchema
-    }
-  }, async (request, reply) => {
-    const files = [];
-    for await (const file of request.files()) {
-      const validFile = ImageFilePartSchema.parse(file);
+  fastify.post(
+    "/:id/images",
+    {
+      schema: {
+        params: schemas.UrlParamsIdSchema,
+      },
+    },
+    async (request, reply) => {
+      const files = [];
+      for await (const file of request.files()) {
+        const validFile = ImageFilePartSchema.parse(file);
 
-      files.push(validFile);
-    }
-    const ok = await imageController.clear(request.params.id);
-    if (!ok) {
-      reply.code(404).send({ message: "Not found." });
-    }
-    const createdImages = await imageController.add(request.params.id, files);
+        files.push(validFile);
+      }
+      const ok = await imageController.clear(request.params.id);
+      if (!ok) {
+        reply.code(404).send({ message: "Not found." });
+      }
+      const createdImages = await imageController.add(request.params.id, files);
 
-    reply.code(201).send({
-      uploads: createdImages
-    })
-  });
+      reply.code(201).send({
+        uploads: createdImages,
+      });
+    },
+  );
 
-  fastify.put("/:id/images", {
-    schema: {
-      params: schemas.UrlParamsIdSchema
-    }
-  }, async (request, reply) => {
-    const files = [];
-    for await (const file of request.files()) {
-      const validFiles = ImageFilePartSchema.parse(file);
+  fastify.put(
+    "/:id/images",
+    {
+      schema: {
+        params: schemas.UrlParamsIdSchema,
+      },
+    },
+    async (request, reply) => {
+      const files = [];
+      for await (const file of request.files()) {
+        const validFiles = ImageFilePartSchema.parse(file);
 
-      files.push(validFiles);
-    }
-    const createdImages = await imageController.add(request.params.id, files);
-    if (!createdImages) {
-      reply.code(404).send({ message: "Not found." });
-    }
-    reply.code(201).send({
-      uploads: createdImages
-    })
-  });
+        files.push(validFiles);
+      }
+      const createdImages = await imageController.add(request.params.id, files);
+      if (!createdImages) {
+        reply.code(404).send({ message: "Not found." });
+      }
+      reply.code(201).send({
+        uploads: createdImages,
+      });
+    },
+  );
 };
 
 export default animalRoutes;

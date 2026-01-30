@@ -4,6 +4,7 @@ import animalRoutes from "./plugins/animal.plugin";
 import { getConfig } from "./config/configGetter";
 import { connectDb } from "./controllers/database";
 import {
+  jsonSchemaTransform,
   serializerCompiler,
   validatorCompiler,
   type ZodTypeProvider,
@@ -13,6 +14,8 @@ import imageControllerPlugin from "./plugins/imageController.plugin";
 import ImageController from "./controllers/image.controller";
 import { Animal } from "./models/animal.model";
 import fastifyMultipart from "@fastify/multipart";
+import fastifySwagger from "@fastify/swagger";
+import fastifySwaggerUi from "@fastify/swagger-ui";
 
 console.log("hello lox");
 
@@ -40,9 +43,7 @@ async function bootstrapServer() {
       registerName: "animalImageController",
     });
 
-    await app.register(animalRoutes);
-
-
+    await app.register(animalRoutes, { prefix: "/animals" });
     await app.listen({
       port: 8080,
       host: "::",
