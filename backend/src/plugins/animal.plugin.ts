@@ -1,46 +1,68 @@
+import { z } from "zod";
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import fastifyMultipart from "@fastify/multipart";
 import * as schemas from "../schemas/animal.schema";
 import { ImageFilePartSchema } from "../schemas/image.schema";
 import verifyApiKey from "../hooks/verify.api";
+import * as errorSchemas from "../schemas/error.schema";
 
 const animalRoutes: FastifyPluginAsyncZod = async (fastify, options) => {
     fastify.register(fastifyMultipart);
     const animalController = fastify.animalController;
     const imageController = fastify.animalImageController;
-    fastify.get("/", async (request, reply) => {
-        try {
-            let animalList = await animalController.getPreviews();
-            if (!animalList) {
-                reply.code(404).send({
-                    statusCode: 404,
-                    error: "Not found",
-                    message: "Oops, animal you look does not exist",
+    fastify.get(
+        "/",
+        {
+            schema: {
+                response: {
+                    200: z.array(schemas.GetAnimalPreviewSchema),
+                    404: errorSchemas.NotFoundErrorSchema,
+                    500: errorSchemas.InternalServerErrorSchema,
+                },
+            },
+        },
+        async (request, reply) => {
+            try {
+                let animalList = await animalController.getPreviews();
+                if (!animalList) {
+                    return reply.code(404).send({
+                        statusCode: 404,
+                        error: "Not found",
+                        message: "Oops, animal you look does not exist",
+                    });
+                }
+
+                return animalList;
+            } catch (e) {
+                reply.code(500).send({
+                    statusCode: 500,
+                    error: "Internal Server Error",
+                    message:
+                        e instanceof Error
+                            ? e.message
+                            : "Internal server error",
                 });
             }
-
-            return animalList;
-        } catch (e) {
-            reply.code(500).send({
-                statusCode: 500,
-                error: e,
-                message: "Internal server error",
-            });
-        }
-    });
+        },
+    );
 
     fastify.get(
         "/:id",
         {
             schema: {
                 params: schemas.UrlParamsIdSchema,
+                response: {
+                    200: schemas.AnimalSchema,
+                    404: errorSchemas.NotFoundErrorSchema,
+                    500: errorSchemas.InternalServerErrorSchema,
+                },
             },
         },
         async (request, reply) => {
             try {
                 let animal = await animalController.get(request.params.id);
                 if (!animal) {
-                    reply.code(404).send({
+                    return reply.code(404).send({
                         statusCode: 404,
                         error: "Not found",
                         message: "Oops, animal you look does not exist",
@@ -51,8 +73,11 @@ const animalRoutes: FastifyPluginAsyncZod = async (fastify, options) => {
             } catch (e) {
                 reply.code(500).send({
                     statusCode: 500,
-                    error: e,
-                    message: "Internal server error",
+                    error: "Internal Server Error",
+                    message:
+                        e instanceof Error
+                            ? e.message
+                            : "Internal server error",
                 });
             }
         },
@@ -63,6 +88,12 @@ const animalRoutes: FastifyPluginAsyncZod = async (fastify, options) => {
         {
             schema: {
                 body: schemas.CreateAnimalSchema,
+                response: {
+                    201: schemas.AnimalSchema,
+                    400: errorSchemas.BadRequestErrorSchema,
+                    401: errorSchemas.UnauthorizedErrorSchema,
+                    500: errorSchemas.InternalServerErrorSchema,
+                },
             },
             preHandler: verifyApiKey,
         },
@@ -77,8 +108,11 @@ const animalRoutes: FastifyPluginAsyncZod = async (fastify, options) => {
             } catch (e) {
                 reply.code(500).send({
                     statusCode: 500,
-                    error: e,
-                    message: "Internal server error",
+                    error: "Internal Server Error",
+                    message:
+                        e instanceof Error
+                            ? e.message
+                            : "Internal server error",
                 });
             }
         },
@@ -90,6 +124,13 @@ const animalRoutes: FastifyPluginAsyncZod = async (fastify, options) => {
             schema: {
                 params: schemas.UrlParamsIdSchema,
                 body: schemas.CreateAnimalSchema,
+                response: {
+                    200: schemas.AnimalSchema,
+                    400: errorSchemas.BadRequestErrorSchema,
+                    401: errorSchemas.UnauthorizedErrorSchema,
+                    404: errorSchemas.NotFoundErrorSchema,
+                    500: errorSchemas.InternalServerErrorSchema,
+                },
             },
             preHandler: verifyApiKey,
         },
@@ -100,7 +141,7 @@ const animalRoutes: FastifyPluginAsyncZod = async (fastify, options) => {
                     request.params.id,
                 );
                 if (!updatedAnimal) {
-                    reply.code(404).send({
+                    return reply.code(404).send({
                         statusCode: 404,
                         error: "Not found",
                         message: "Oops, animal you look does not exist",
@@ -111,8 +152,11 @@ const animalRoutes: FastifyPluginAsyncZod = async (fastify, options) => {
             } catch (e) {
                 reply.code(500).send({
                     statusCode: 500,
-                    error: e,
-                    message: "Internal server error",
+                    error: "Internal Server Error",
+                    message:
+                        e instanceof Error
+                            ? e.message
+                            : "Internal server error",
                 });
             }
         },
@@ -123,6 +167,12 @@ const animalRoutes: FastifyPluginAsyncZod = async (fastify, options) => {
         {
             schema: {
                 params: schemas.UrlParamsIdSchema,
+                response: {
+                    200: z.object({}),
+                    401: errorSchemas.UnauthorizedErrorSchema,
+                    404: errorSchemas.NotFoundErrorSchema,
+                    500: errorSchemas.InternalServerErrorSchema,
+                },
             },
             preHandler: verifyApiKey,
         },
@@ -141,8 +191,11 @@ const animalRoutes: FastifyPluginAsyncZod = async (fastify, options) => {
             } catch (e) {
                 reply.code(500).send({
                     statusCode: 500,
-                    error: e,
-                    message: "Internal server error",
+                    error: "Internal Server Error",
+                    message:
+                        e instanceof Error
+                            ? e.message
+                            : "Internal server error",
                 });
             }
         },
@@ -153,6 +206,15 @@ const animalRoutes: FastifyPluginAsyncZod = async (fastify, options) => {
         {
             schema: {
                 params: schemas.UrlParamsIdSchema,
+                response: {
+                    201: z.object({
+                        uploads: z.array(z.string()),
+                    }),
+                    400: errorSchemas.BadRequestErrorSchema,
+                    401: errorSchemas.UnauthorizedErrorSchema,
+                    404: errorSchemas.NotFoundErrorSchema,
+                    500: errorSchemas.InternalServerErrorSchema,
+                },
             },
             preHandler: verifyApiKey,
         },
@@ -166,7 +228,7 @@ const animalRoutes: FastifyPluginAsyncZod = async (fastify, options) => {
                 }
                 const ok = await imageController.clear(request.params.id);
                 if (!ok) {
-                    reply.code(404).send({
+                    return reply.code(404).send({
                         statusCode: 404,
                         error: "Not found",
                         message: "Oops, animal you look does not exist",
@@ -176,6 +238,13 @@ const animalRoutes: FastifyPluginAsyncZod = async (fastify, options) => {
                     request.params.id,
                     files,
                 );
+                if (!createdImages) {
+                    return reply.code(404).send({
+                        statusCode: 404,
+                        error: "Not found",
+                        message: "Oops, animal you look does not exist",
+                    });
+                }
 
                 reply.code(201).send({
                     uploads: createdImages,
@@ -183,8 +252,11 @@ const animalRoutes: FastifyPluginAsyncZod = async (fastify, options) => {
             } catch (e) {
                 reply.code(500).send({
                     statusCode: 500,
-                    error: e,
-                    message: "Internal server error",
+                    error: "Internal Server Error",
+                    message:
+                        e instanceof Error
+                            ? e.message
+                            : "Internal server error",
                 });
             }
         },
@@ -195,6 +267,15 @@ const animalRoutes: FastifyPluginAsyncZod = async (fastify, options) => {
         {
             schema: {
                 params: schemas.UrlParamsIdSchema,
+                response: {
+                    201: z.object({
+                        uploads: z.array(z.string()),
+                    }),
+                    400: errorSchemas.BadRequestErrorSchema,
+                    401: errorSchemas.UnauthorizedErrorSchema,
+                    404: errorSchemas.NotFoundErrorSchema,
+                    500: errorSchemas.InternalServerErrorSchema,
+                },
             },
             preHandler: verifyApiKey,
         },
@@ -211,7 +292,7 @@ const animalRoutes: FastifyPluginAsyncZod = async (fastify, options) => {
                     files,
                 );
                 if (!createdImages) {
-                    reply.code(404).send({
+                    return reply.code(404).send({
                         statusCode: 404,
                         error: "Not found",
                         message: "Oops, animal you look does not exist",
@@ -223,8 +304,11 @@ const animalRoutes: FastifyPluginAsyncZod = async (fastify, options) => {
             } catch (e) {
                 reply.code(500).send({
                     statusCode: 500,
-                    error: e,
-                    message: "Internal server error",
+                    error: "Internal Server Error",
+                    message:
+                        e instanceof Error
+                            ? e.message
+                            : "Internal server error",
                 });
             }
         },

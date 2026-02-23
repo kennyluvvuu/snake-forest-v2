@@ -13,7 +13,7 @@ export default interface IAnimalController {
     getPreviews: () => Promise<Array<GetAnimalPreviewRes> | null>;
     update: (
         req: UpdateAnimalReq,
-        id: string
-    ) => Promise<UpdateAnimalReq | null>;
+        id: string,
+    ) => Promise<UpdateAnimalRes | null>;
     delete: (id: string) => Promise<boolean>;
 }
