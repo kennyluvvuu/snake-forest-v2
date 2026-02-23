@@ -39,13 +39,19 @@ const animalRoutes: FastifyPluginAsyncZod = async (fastify, options) => {
             try {
                 let animal = await animalController.get(request.params.id);
                 if (!animal) {
-                    reply.code(404).send({ message: "Not found." });
+                    reply.code(404).send({
+                        statusCode: 404,
+                        error: "Not found",
+                        message: "Oops, animal you look does not exist",
+                    });
                 }
 
                 return animal;
             } catch (e) {
                 reply.code(500).send({
+                    statusCode: 500,
                     error: e,
+                    message: "Internal server error",
                 });
             }
         },
@@ -69,7 +75,9 @@ const animalRoutes: FastifyPluginAsyncZod = async (fastify, options) => {
                     .send(createdAnimal);
             } catch (e) {
                 reply.code(500).send({
+                    statusCode: 500,
                     error: e,
+                    message: "Internal server error",
                 });
             }
         },
@@ -91,13 +99,19 @@ const animalRoutes: FastifyPluginAsyncZod = async (fastify, options) => {
                     request.params.id,
                 );
                 if (!updatedAnimal) {
-                    reply.code(404).send({ message: "Not found." });
+                    reply.code(404).send({
+                        statusCode: 404,
+                        error: "Not found",
+                        message: "Oops, animal you look does not exist",
+                    });
                 }
 
                 return updatedAnimal;
             } catch (e) {
                 reply.code(500).send({
+                    statusCode: 500,
                     error: e,
+                    message: "Internal server error",
                 });
             }
         },
@@ -115,13 +129,19 @@ const animalRoutes: FastifyPluginAsyncZod = async (fastify, options) => {
             try {
                 let deleted = await animalController.delete(request.params.id);
                 if (!deleted) {
-                    reply.code(404).send({ message: "Not found." });
+                    reply.code(404).send({
+                        statusCode: 404,
+                        error: "Not found",
+                        message: "Oops, animal you look does not exist",
+                    });
                 }
 
                 reply.code(200);
             } catch (e) {
                 reply.code(500).send({
+                    statusCode: 500,
                     error: e,
+                    message: "Internal server error",
                 });
             }
         },
@@ -144,7 +164,11 @@ const animalRoutes: FastifyPluginAsyncZod = async (fastify, options) => {
             }
             const ok = await imageController.clear(request.params.id);
             if (!ok) {
-                reply.code(404).send({ message: "Not found." });
+                reply.code(404).send({
+                    statusCode: 404,
+                    error: "Not found",
+                    message: "Oops, animal you look does not exist",
+                });
             }
             const createdImages = await imageController.add(
                 request.params.id,
@@ -177,7 +201,11 @@ const animalRoutes: FastifyPluginAsyncZod = async (fastify, options) => {
                 files,
             );
             if (!createdImages) {
-                reply.code(404).send({ message: "Not found." });
+                reply.code(404).send({
+                    statusCode: 404,
+                    error: "Not found",
+                    message: "Oops, animal you look does not exist",
+                });
             }
             reply.code(201).send({
                 uploads: createdImages,
