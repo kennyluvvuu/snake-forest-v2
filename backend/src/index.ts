@@ -33,7 +33,6 @@ async function bootstrapServer() {
         await app.register(configPlugin);
         app.log.info(app.config);
         await connectDb(app.config.db);
-        await app.register(fastifyMultipart);
 
         await app.register(animalControllerPlugin, {
             animalController: new AnimalController(),

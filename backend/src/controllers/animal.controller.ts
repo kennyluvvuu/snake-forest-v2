@@ -12,9 +12,12 @@ import { Animal } from "../models/animal.model";
 export default class AnimalController implements IAnimalController {
     async create(req: CreateAnimalReq): Promise<CreateAnimalRes> {
         const newAnimal = new Animal({
+            species: req.species,
             commonName: req.commonName,
             morph: req.morph,
+            age: req.age,
             sex: req.sex,
+            priority: req.priority,
             price: req.price,
             description: req.description,
         });
@@ -24,8 +27,11 @@ export default class AnimalController implements IAnimalController {
         return {
             id: savedAnimal.id,
             commonName: savedAnimal.commonName,
+            species: savedAnimal.species,
             morph: savedAnimal.morph,
+            age: savedAnimal.age,
             sex: savedAnimal.sex,
+            priority: savedAnimal.priority,
             price: savedAnimal.price,
             description: savedAnimal.description,
             imagesUrl: savedAnimal.images,
@@ -42,8 +48,11 @@ export default class AnimalController implements IAnimalController {
         return {
             id: fullAnimal.id,
             commonName: fullAnimal.commonName,
+            species: fullAnimal.species,
             morph: fullAnimal.morph,
+            age: fullAnimal.age,
             sex: fullAnimal.sex,
+            priority: fullAnimal.priority,
             price: fullAnimal.price,
             description: fullAnimal.description,
             imagesUrl: fullAnimal.images,
@@ -64,8 +73,11 @@ export default class AnimalController implements IAnimalController {
             return {
                 id: animalPreview.id,
                 commonName: animalPreview.commonName,
+                species: animalPreview.species,
                 morph: animalPreview.morph,
+                age: animalPreview.age,
                 sex: animalPreview.sex,
+                priority: animalPreview.priority,
                 price: animalPreview.price,
                 preview: animalPreview.images,
             };
@@ -74,21 +86,24 @@ export default class AnimalController implements IAnimalController {
 
     async update(
         req: UpdateAnimalReq,
-        id: string
+        id: string,
     ): Promise<UpdateAnimalRes | null> {
         const updatedAnimal = await Animal.findByIdAndUpdate(
             id,
             {
+                species: req.species,
                 commonName: req.commonName,
                 morph: req.morph,
+                age: req.age,
                 sex: req.sex,
+                priority: req.priority,
                 price: req.price,
                 description: req.description,
             },
             {
                 new: true,
                 runValidators: true,
-            }
+            },
         );
 
         if (!updatedAnimal) {
@@ -98,8 +113,11 @@ export default class AnimalController implements IAnimalController {
         return {
             id: updatedAnimal.id,
             commonName: updatedAnimal.commonName,
+            species: updatedAnimal.species,
             morph: updatedAnimal.morph,
+            age: updatedAnimal.age,
             sex: updatedAnimal.sex,
+            priority: updatedAnimal.priority,
             price: updatedAnimal.price,
             description: updatedAnimal.description,
             imagesUrl: updatedAnimal.images,

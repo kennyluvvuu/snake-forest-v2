@@ -1,10 +1,11 @@
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
-import multipart from "@fastify/multipart";
+import fastifyMultipart from "@fastify/multipart";
 import * as schemas from "../schemas/animal.schema";
 import { ImageFilePartSchema } from "../schemas/image.schema";
 import verifyApiKey from "../hooks/verify.api";
 
 const animalRoutes: FastifyPluginAsyncZod = async (fastify, options) => {
+    fastify.register(fastifyMultipart);
     const animalController = fastify.animalController;
     const imageController = fastify.animalImageController;
     fastify.get("/", async (request, reply) => {
@@ -156,28 +157,36 @@ const animalRoutes: FastifyPluginAsyncZod = async (fastify, options) => {
             preHandler: verifyApiKey,
         },
         async (request, reply) => {
-            const files = [];
-            for await (const file of request.files()) {
-                const validFile = ImageFilePartSchema.parse(file);
+            try {
+                const files = [];
+                for await (const file of request.files()) {
+                    const validFile = ImageFilePartSchema.parse(file);
 
-                files.push(validFile);
-            }
-            const ok = await imageController.clear(request.params.id);
-            if (!ok) {
-                reply.code(404).send({
-                    statusCode: 404,
-                    error: "Not found",
-                    message: "Oops, animal you look does not exist",
+                    files.push(validFile);
+                }
+                const ok = await imageController.clear(request.params.id);
+                if (!ok) {
+                    reply.code(404).send({
+                        statusCode: 404,
+                        error: "Not found",
+                        message: "Oops, animal you look does not exist",
+                    });
+                }
+                const createdImages = await imageController.add(
+                    request.params.id,
+                    files,
+                );
+
+                reply.code(201).send({
+                    uploads: createdImages,
+                });
+            } catch (e) {
+                reply.code(500).send({
+                    statusCode: 500,
+                    error: e,
+                    message: "Internal server error",
                 });
             }
-            const createdImages = await imageController.add(
-                request.params.id,
-                files,
-            );
-
-            reply.code(201).send({
-                uploads: createdImages,
-            });
         },
     );
 
@@ -190,26 +199,34 @@ const animalRoutes: FastifyPluginAsyncZod = async (fastify, options) => {
             preHandler: verifyApiKey,
         },
         async (request, reply) => {
-            const files = [];
-            for await (const file of request.files()) {
-                const validFiles = ImageFilePartSchema.parse(file);
+            try {
+                const files = [];
+                for await (const file of request.files()) {
+                    const validFiles = ImageFilePartSchema.parse(file);
 
-                files.push(validFiles);
-            }
-            const createdImages = await imageController.add(
-                request.params.id,
-                files,
-            );
-            if (!createdImages) {
-                reply.code(404).send({
-                    statusCode: 404,
-                    error: "Not found",
-                    message: "Oops, animal you look does not exist",
+                    files.push(validFiles);
+                }
+                const createdImages = await imageController.add(
+                    request.params.id,
+                    files,
+                );
+                if (!createdImages) {
+                    reply.code(404).send({
+                        statusCode: 404,
+                        error: "Not found",
+                        message: "Oops, animal you look does not exist",
+                    });
+                }
+                reply.code(201).send({
+                    uploads: createdImages,
+                });
+            } catch (e) {
+                reply.code(500).send({
+                    statusCode: 500,
+                    error: e,
+                    message: "Internal server error",
                 });
             }
-            reply.code(201).send({
-                uploads: createdImages,
-            });
         },
     );
 };
