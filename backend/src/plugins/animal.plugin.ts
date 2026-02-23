@@ -222,9 +222,13 @@ const animalRoutes: FastifyPluginAsyncZod = async (fastify, options) => {
             try {
                 const files = [];
                 for await (const file of request.files()) {
+                    const buffer = await file.toBuffer();
                     const validFile = ImageFilePartSchema.parse(file);
 
-                    files.push(validFile);
+                    files.push({
+                        ...validFile,
+                        buffer: buffer,
+                    });
                 }
                 const ok = await imageController.clear(request.params.id);
                 if (!ok) {
@@ -283,9 +287,13 @@ const animalRoutes: FastifyPluginAsyncZod = async (fastify, options) => {
             try {
                 const files = [];
                 for await (const file of request.files()) {
-                    const validFiles = ImageFilePartSchema.parse(file);
+                    const buffer = await file.toBuffer();
+                    const validFile = ImageFilePartSchema.parse(file);
 
-                    files.push(validFiles);
+                    files.push({
+                        ...validFile,
+                        buffer: buffer,
+                    });
                 }
                 const createdImages = await imageController.add(
                     request.params.id,
