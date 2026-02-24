@@ -1,3 +1,5 @@
+from io import BytesIO
+
 import httpx
 from aiogram import Router, F, Bot
 from aiogram.filters import StateFilter
@@ -87,9 +89,10 @@ async def cb_images_done(
     files: list[tuple] = []
     for idx, file_id in enumerate(photo_ids):
         tg_file = await bot.get_file(file_id)
-        file_bytes = await bot.download_file(tg_file.file_path)
+        file_bytes: BytesIO = await bot.download_file(tg_file.file_path)
+        raw = file_bytes.getvalue()
         filename = f"photo_{idx + 1}.jpg"
-        files.append((filename, file_bytes.read(), "image/jpeg"))
+        files.append((filename, raw, "image/jpeg"))
 
     await state.clear()
 

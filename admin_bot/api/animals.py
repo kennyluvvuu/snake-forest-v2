@@ -33,14 +33,22 @@ async def upload_images(client: httpx.AsyncClient, animal_id: str, files: list[t
     files: list of (filename, file_bytes, content_type)
     Sends multipart/form-data to POST /animals/{id}/images
     """
-    multipart = [("files", (name, data, ctype)) for name, data, ctype in files]
-    # Remove Content-Type for multipart — httpx sets it automatically
-    headers = {k: v for k, v in client.headers.items() if k.lower() != "content-type"}
-    response = await client.post(
-        f"/animals/{animal_id}/images",
-        files=multipart,
-        headers=headers,
-    )
+    for name, data, ctype in files:
+        print(f"{name}: {len(data)} bytes, type={type(data)}")
+    multipart = [
+        ("image", (name, data, ctype))
+        for name, data, ctype in files
+    ]
+    # Create a separate client without Content-Type issues
+    async with httpx.AsyncClient(
+        base_url=str(client.base_url),
+        headers={"X-API-Key": client.headers["x-api-key"]},
+        timeout=30.0,
+    ) as temp_client:
+        response = await temp_client.put(
+            f"/animals/{animal_id}/images",
+            files=multipart,
+        )
     return await handle_response(response)
 
 
@@ -49,11 +57,20 @@ async def replace_images(client: httpx.AsyncClient, animal_id: str, files: list[
     files: list of (filename, file_bytes, content_type)
     Sends multipart/form-data to PUT /animals/{id}/images
     """
-    multipart = [("files", (name, data, ctype)) for name, data, ctype in files]
-    headers = {k: v for k, v in client.headers.items() if k.lower() != "content-type"}
-    response = await client.put(
-        f"/animals/{animal_id}/images",
-        files=multipart,
-        headers=headers,
-    )
+    for name, data, ctype in files:
+        print(f"{name}: {len(data)} bytes, type={type(data)}")
+    multipart = [
+        ("image", (name, data, ctype))
+        for name, data, ctype in files
+    ]
+    # Create a separate client without Content-Type issues
+    async with httpx.AsyncClient(
+        base_url=str(client.base_url),
+        headers={"X-API-Key": client.headers["x-api-key"]},
+        timeout=30.0,
+    ) as temp_client:
+        response = await temp_client.post(
+            f"/animals/{animal_id}/images",
+            files=multipart,
+        )
     return await handle_response(response)
