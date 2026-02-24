@@ -6,7 +6,7 @@ from aiogram.types import Message, CallbackQuery
 
 from api.animals import create_animal
 from api.client import APIError
-from bot.keyboards.animals import age_keyboard, sex_keyboard, cancel_keyboard
+from bot.keyboards.animals import age_keyboard, sex_keyboard, cancel_keyboard, species_keyboard
 from bot.keyboards.main_menu import main_menu_keyboard
 from bot.states.animal import CreateAnimalSG
 
@@ -42,18 +42,19 @@ async def step_common_name(message: Message, state: FSMContext) -> None:
     await state.update_data(commonName=message.text.strip())
     await state.set_state(CreateAnimalSG.species)
     await message.answer(
-        "Шаг 2/8 — Введите <b>вид</b> (species):\n<i>Например: Python regius</i>",
+        "Шаг 2/8 — Выберете <b>вид</b> (species):",
         parse_mode="HTML",
-        reply_markup=cancel_keyboard(),
+        reply_markup=species_keyboard("create:species"),
     )
 
 # ── Step 2: species ───────────────────────────────────────────────────────────
 
-@router.message(CreateAnimalSG.species)
-async def step_species(message: Message, state: FSMContext) -> None:
-    await state.update_data(species=message.text.strip())
+@router.callback_query(CreateAnimalSG.species, F.data.startswith("create:species:"))
+async def step_species(callback: CallbackQuery, state: FSMContext) -> None:
+    species_value = callback.data.split(":")[-1]
+    await state.update_data(species=species_value)
     await state.set_state(CreateAnimalSG.morph)
-    await message.answer(
+    await callback.message.edit_text(
         "Шаг 3/8 — Введите <b>морф</b>:\n<i>Например: Spider, Pied, Normal</i>",
         parse_mode="HTML",
         reply_markup=cancel_keyboard(),

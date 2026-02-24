@@ -92,3 +92,19 @@ def sex_keyboard(prefix: str) -> InlineKeyboardMarkup:
             ]
         ]
     )
+
+def species_keyboard(prefix: str) -> InlineKeyboardMarkup:
+    return InlineKeyboardMarkup(
+        inline_keyboard=[
+            [
+                InlineKeyboardButton(text="Ящерица", callback_data=f'{prefix}:lizard'),
+                InlineKeyboardButton(text="Змея", callback_data=f'{prefix}:snake'),
+                InlineKeyboardButton(text="Черепаха", callback_data=f'{prefix}:turtle'),
+            ],
+            [
+                InlineKeyboardButton(text="Рыбка", callback_data=f'{prefix}:fish'),
+                InlineKeyboardButton(text="Грызун", callback_data=f'{prefix}:rodent'),
+                InlineKeyboardButton(text="Прочее", callback_data=f'{prefix}:other'),
+            ]
+        ]
+    )
