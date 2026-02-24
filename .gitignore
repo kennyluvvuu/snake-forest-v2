@@ -41,3 +41,14 @@ report.[0-9]_.[0-9]_.[0-9]_.[0-9]_.json
 # Testing db data
 mongo-data
 .aider*
+# Python trash
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+admin_bot/__pycache__/
+admin_bot/__pycache__/
+admin_bot/api/__pycache__/
+admin_bot/bot/handlers/__pycache__/
+admin_bot/bot/handlers/__pycache__/
+admin_bot/bot/keyboards/__pycache__/
