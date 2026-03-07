@@ -1,21 +1,22 @@
 import { z } from "zod";
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import fastifyMultipart from "@fastify/multipart";
-import * as schemas from "../schemas/animal.schema";
+import * as schemas from "../schemas/product.schema";
 import { ImageFilePartSchema } from "../schemas/image.schema";
 import verifyApiKey from "../hooks/verify.api";
 import * as errorSchemas from "../schemas/error.schema";
 
-const animalRoutes: FastifyPluginAsyncZod = async (fastify, options) => {
+const productRoutes: FastifyPluginAsyncZod = async (fastify, options) => {
     fastify.register(fastifyMultipart);
-    const animalController = fastify.animalController;
-    const imageController = fastify.animalImageController;
+    const productController = fastify.productController;
+    const imageController = fastify.productImageController;
+
     fastify.get(
         "/",
         {
             schema: {
                 response: {
-                    200: z.array(schemas.GetAnimalPreviewSchema),
+                    200: z.array(schemas.GetProductPreviewSchema),
                     404: errorSchemas.NotFoundErrorSchema,
                     500: errorSchemas.InternalServerErrorSchema,
                 },
@@ -23,16 +24,16 @@ const animalRoutes: FastifyPluginAsyncZod = async (fastify, options) => {
         },
         async (request, reply) => {
             try {
-                let animalList = await animalController.getPreviews();
-                if (!animalList) {
+                const productList = await productController.getPreviews();
+                if (!productList) {
                     return reply.code(404).send({
                         statusCode: 404,
                         error: "Not found",
-                        message: "Oops, animal you look does not exist",
+                        message: "No products found",
                     });
                 }
 
-                return animalList;
+                return productList;
             } catch (e) {
                 reply.code(500).send({
                     statusCode: 500,
@@ -52,7 +53,7 @@ const animalRoutes: FastifyPluginAsyncZod = async (fastify, options) => {
             schema: {
                 params: schemas.UrlParamsIdSchema,
                 response: {
-                    200: schemas.AnimalSchema,
+                    200: schemas.ProductSchema,
                     404: errorSchemas.NotFoundErrorSchema,
                     500: errorSchemas.InternalServerErrorSchema,
                 },
@@ -60,16 +61,16 @@ const animalRoutes: FastifyPluginAsyncZod = async (fastify, options) => {
         },
         async (request, reply) => {
             try {
-                let animal = await animalController.get(request.params.id);
-                if (!animal) {
+                const product = await productController.get(request.params.id);
+                if (!product) {
                     return reply.code(404).send({
                         statusCode: 404,
                         error: "Not found",
-                        message: "Oops, animal you look does not exist",
+                        message: "Oops, product you look does not exist",
                     });
                 }
 
-                return animal;
+                return product;
             } catch (e) {
                 reply.code(500).send({
                     statusCode: 500,
@@ -87,9 +88,9 @@ const animalRoutes: FastifyPluginAsyncZod = async (fastify, options) => {
         "/",
         {
             schema: {
-                body: schemas.CreateAnimalSchema,
+                body: schemas.CreateProductSchema,
                 response: {
-                    201: schemas.AnimalSchema,
+                    201: schemas.ProductSchema,
                     400: errorSchemas.BadRequestErrorSchema,
                     401: errorSchemas.UnauthorizedErrorSchema,
                     500: errorSchemas.InternalServerErrorSchema,
@@ -99,12 +100,12 @@ const animalRoutes: FastifyPluginAsyncZod = async (fastify, options) => {
         },
         async (request, reply) => {
             try {
-                let createdAnimal = await animalController.create(request.body);
+                const createdProduct = await productController.create(request.body);
 
                 reply
                     .code(201)
-                    .header("Location", `/api/animals/${createdAnimal.id}`)
-                    .send(createdAnimal);
+                    .header("Location", `/api/products/${createdProduct.id}`)
+                    .send(createdProduct);
             } catch (e) {
                 reply.code(500).send({
                     statusCode: 500,
@@ -123,9 +124,9 @@ const animalRoutes: FastifyPluginAsyncZod = async (fastify, options) => {
         {
             schema: {
                 params: schemas.UrlParamsIdSchema,
-                body: schemas.CreateAnimalSchema,
+                body: schemas.UpdateProductSchema,
                 response: {
-                    200: schemas.AnimalSchema,
+                    200: schemas.ProductSchema,
                     400: errorSchemas.BadRequestErrorSchema,
                     401: errorSchemas.UnauthorizedErrorSchema,
                     404: errorSchemas.NotFoundErrorSchema,
@@ -136,19 +137,19 @@ const animalRoutes: FastifyPluginAsyncZod = async (fastify, options) => {
         },
         async (request, reply) => {
             try {
-                let updatedAnimal = await animalController.update(
-                    request.body,
+                const updatedProduct = await productController.update(
                     request.params.id,
+                    request.body,
                 );
-                if (!updatedAnimal) {
+                if (!updatedProduct) {
                     return reply.code(404).send({
                         statusCode: 404,
                         error: "Not found",
-                        message: "Oops, animal you look does not exist",
+                        message: "Oops, product you look does not exist",
                     });
                 }
 
-                return updatedAnimal;
+                return updatedProduct;
             } catch (e) {
                 reply.code(500).send({
                     statusCode: 500,
@@ -178,12 +179,12 @@ const animalRoutes: FastifyPluginAsyncZod = async (fastify, options) => {
         },
         async (request, reply) => {
             try {
-                let deleted = await animalController.delete(request.params.id);
+                const deleted = await productController.delete(request.params.id);
                 if (!deleted) {
                     return reply.code(404).send({
                         statusCode: 404,
                         error: "Not found",
-                        message: "Oops, animal you look does not exist",
+                        message: "Oops, product you look does not exist",
                     });
                 }
 
@@ -235,7 +236,7 @@ const animalRoutes: FastifyPluginAsyncZod = async (fastify, options) => {
                     return reply.code(404).send({
                         statusCode: 404,
                         error: "Not found",
-                        message: "Oops, animal you look does not exist",
+                        message: "Oops, product you look does not exist",
                     });
                 }
                 const createdImages = await imageController.add(
@@ -246,7 +247,7 @@ const animalRoutes: FastifyPluginAsyncZod = async (fastify, options) => {
                     return reply.code(404).send({
                         statusCode: 404,
                         error: "Not found",
-                        message: "Oops, animal you look does not exist",
+                        message: "Oops, product you look does not exist",
                     });
                 }
 
@@ -303,7 +304,7 @@ const animalRoutes: FastifyPluginAsyncZod = async (fastify, options) => {
                     return reply.code(404).send({
                         statusCode: 404,
                         error: "Not found",
-                        message: "Oops, animal you look does not exist",
+                        message: "Oops, product you look does not exist",
                     });
                 }
                 reply.code(201).send({
@@ -323,4 +324,4 @@ const animalRoutes: FastifyPluginAsyncZod = async (fastify, options) => {
     );
 };
 
-export default animalRoutes;
+export default productRoutes;
