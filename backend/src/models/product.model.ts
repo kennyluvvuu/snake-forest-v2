@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 
 const ProductModel = new mongoose.Schema({
+    slug: { type: String, required: true, unique: true },
     name: { type: String, required: true },
     price: { type: Number, required: true },
     type: {

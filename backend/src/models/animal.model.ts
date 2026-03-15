@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 
 const AnimalModel = new mongoose.Schema({
+    slug: { type: String, required: true, unique: true },
     commonName: { type: String, required: true },
     species: { type: String, required: true },
     morph: { type: String, required: true },
@@ -15,7 +16,7 @@ const AnimalModel = new mongoose.Schema({
     images: {
         type: [String],
         required: true,
-        default: ["/uploads/animals/default.jpeg"],
+        default: [],
     },
     description: { type: String, required: true },
 });

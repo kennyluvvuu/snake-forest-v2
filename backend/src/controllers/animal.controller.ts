@@ -8,10 +8,19 @@ import {
 } from "../schemas/animal.schema";
 import type IAnimalController from "../interfaces/animal.controller.interface";
 import { Animal } from "../models/animal.model";
+import slugify from "slugify";
 
 export default class AnimalController implements IAnimalController {
     async create(req: CreateAnimalReq): Promise<CreateAnimalRes> {
+        let baseSlug = slugify(req.commonName + " " + req.morph);
+        let slug = baseSlug;
+        let counter = 1;
+        while (await Animal.findOne({ slug })) {
+            slug = baseSlug + "-" + counter;
+            counter++;
+        }
         const newAnimal = new Animal({
+            slug: slug,
             species: req.species,
             commonName: req.commonName,
             morph: req.morph,
@@ -26,6 +35,7 @@ export default class AnimalController implements IAnimalController {
 
         return {
             id: savedAnimal.id,
+            slug: savedAnimal.slug,
             commonName: savedAnimal.commonName,
             species: savedAnimal.species,
             morph: savedAnimal.morph,
@@ -47,6 +57,7 @@ export default class AnimalController implements IAnimalController {
 
         return {
             id: fullAnimal.id,
+            slug: fullAnimal.slug,
             commonName: fullAnimal.commonName,
             species: fullAnimal.species,
             morph: fullAnimal.morph,
@@ -72,6 +83,7 @@ export default class AnimalController implements IAnimalController {
         return animalPreviews.map((animalPreview) => {
             return {
                 id: animalPreview.id,
+                slug: animalPreview.slug,
                 commonName: animalPreview.commonName,
                 species: animalPreview.species,
                 morph: animalPreview.morph,
@@ -112,6 +124,7 @@ export default class AnimalController implements IAnimalController {
 
         return {
             id: updatedAnimal.id,
+            slug: updatedAnimal.slug,
             commonName: updatedAnimal.commonName,
             species: updatedAnimal.species,
             morph: updatedAnimal.morph,

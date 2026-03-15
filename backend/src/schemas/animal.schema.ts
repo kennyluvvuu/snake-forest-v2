@@ -2,6 +2,7 @@ import { z } from "zod";
 
 export const AnimalSchema = z.object({
     id: z.string(),
+    slug: z.string(),
     commonName: z.string().min(2, { message: "Common name is required." }),
     species: z.string(),
     morph: z.string().min(2),
@@ -25,6 +26,7 @@ export const AnimalSchema = z.object({
 export const CreateAnimalSchema = AnimalSchema.omit({
     id: true,
     imagesUrl: true,
+    slug: true,
 });
 
 export type CreateAnimalReq = z.infer<typeof CreateAnimalSchema>;
@@ -33,6 +35,7 @@ export type CreateAnimalRes = z.infer<typeof AnimalSchema>;
 export const UpdateAnimalSchema = AnimalSchema.omit({
     id: true,
     imagesUrl: true,
+    slug: true,
 });
 
 export type UpdateAnimalReq = z.infer<typeof UpdateAnimalSchema>;
