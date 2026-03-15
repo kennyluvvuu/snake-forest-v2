@@ -6,21 +6,20 @@ import ContactButtons from '../../components/ContactButtons.astro';
 import { apiFetch, type Animal } from '../../lib/api';
 import { ChevronLeft, ChevronRight, Info, Fingerprint, Calendar } from '@lucide/astro';
 
-const { id } = Astro.params;
-
-let animal: Animal | null = null;
-let error = null;
-
-try {
-  animal = await apiFetch<Animal>(`/animals/${id}`);
-} catch (e) {
-  console.error(`Failed to fetch animal ${id}:`, e);
-  error = (e as Error).message === 'Not Found' ? 'Животное не найдено' : 'Ошибка загрузки данных';
+export async function getStaticPaths() {
+  const previews = await apiFetch<Animal[]>('/animals/');
+  
+  const animals = await Promise.all(
+    previews.map(p => apiFetch<Animal>(`/animals/${p.slug}`))
+  );
+  
+  return animals.map(animal => ({
+    params: { slug: animal.slug },
+    props: { animal }
+  }));
 }
 
-if (!animal && !error) {
-  return Astro.redirect('/404');
-}
+const { animal } = Astro.props;
 
 const ageLabels = {
   young: 'Малыш',
@@ -41,14 +40,7 @@ const images = animal?.imagesUrl || (animal?.preview ? [animal.preview[0]] : [])
   <SiteHeader slot="header" />
 
   <section class="max-w-7xl mx-auto px-4 py-8 md:py-16">
-    {error ? (
-      <div class="text-center py-20">
-        <h1 class="text-3xl font-serif font-bold text-brand-text mb-4">{error}</h1>
-        <a href="/animals" class="text-brand-accent hover:underline">Вернуться в каталог</a>
-      </div>
-    ) : animal && (
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
-        
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
         <!-- Gallery Section -->
         <div class="space-y-4">
           <div class="relative aspect-square rounded-[2rem] overflow-hidden border border-brand-border bg-brand-surface group" id="main-image-container">
@@ -158,7 +150,6 @@ const images = animal?.imagesUrl || (animal?.preview ? [animal.preview[0]] : [])
           </div>
         </div>
       </div>
-    )}
   </section>
 
   <SiteFooter slot="footer" />
