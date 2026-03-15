@@ -1,0 +1,127 @@
+---
+import MainLayout from '../layouts/MainLayout.astro';
+import SiteHeader from '../components/SiteHeader.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import AnimalCard from '../components/AnimalCard.astro';
+import ShopCategoryCard from '../components/ShopCategoryCard.astro';
+import ContactButtons from '../components/ContactButtons.astro';
+import { apiFetch, type Animal } from '../lib/api';
+
+let latestAnimals: Animal[] = [];
+let error = null;
+
+try {
+  const animals = await apiFetch<Animal[]>('/animals/');
+  latestAnimals = animals.slice(0, 3);
+} catch (e) {
+  console.error("Failed to fetch animals for home page:", e);
+  error = "Не удалось загрузить данные";
+}
+
+const shopCategories = [
+  {
+    title: "Оборудование",
+    description: "Лампы, термостаты, поилки, укрытия и 3D-декор",
+    image: "https://images.unsplash.com/photo-1629882495260-db32d19b1c99?q=80&w=800&auto=format&fit=crop",
+    href: "/shop?type=usable"
+  },
+  {
+    title: "Корм",
+    description: "Замороженные и живые корма для всех видов",
+    image: "https://images.unsplash.com/photo-1594493309990-255d6447817a?q=80&w=800&auto=format&fit=crop",
+    href: "/shop?type=food"
+  },
+  {
+    title: "Игрушки",
+    description: "Для активных и любознательных питомцев",
+    image: "https://images.unsplash.com/photo-1623914017163-5477d64388cc?q=80&w=800&auto=format&fit=crop",
+    href: "/shop?type=toy"
+  }
+];
+---
+
+<MainLayout>
+  <SiteHeader slot="header" />
+  
+  <section class="relative pt-20 pb-16 md:pt-32 md:pb-24 px-4 overflow-hidden">
+    <div class="max-w-7xl mx-auto text-center relative z-10">
+      <h1 class="text-5xl md:text-8xl font-serif font-bold text-brand-text mb-6 tracking-tight">
+        Змеиный <span class="text-brand-accent italic">лес</span>
+      </h1>
+      <p class="text-xl md:text-2xl text-brand-text/70 mb-10 max-w-2xl mx-auto leading-relaxed">
+        Уникальная коллекция экзотических животных и профессиональное оборудование для их содержания.
+      </p>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <a href="/animals" class="bg-brand-text text-brand-bg px-10 py-4 rounded-xl font-bold text-lg transition-transform hover:scale-105 active:scale-95">
+          Животные
+        </a>
+        <a href="/shop" class="bg-brand-surface text-brand-text border border-brand-border px-10 py-4 rounded-xl font-bold text-lg transition-transform hover:scale-105 active:scale-95">
+          Товары
+        </a>
+      </div>
+    </div>
+    
+    <!-- Background Decor -->
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[150%] h-[150%] bg-radial-gradient from-brand-accent/5 to-transparent pointer-events-none"></div>
+  </section>
+
+  <section class="py-16 px-4 bg-brand-surface/50 border-y border-brand-border">
+    <div class="max-w-7xl mx-auto">
+      <div class="flex justify-between items-end mb-10">
+        <div>
+          <h2 class="text-3xl md:text-4xl font-serif font-bold text-brand-text mb-2">Новые жители</h2>
+          <p class="text-brand-text/60">Последние пополнения в нашей коллекции</p>
+        </div>
+        <a href="/animals" class="hidden md:block text-brand-accent font-bold hover:underline">
+          Смотреть всех →
+        </a>
+      </div>
+
+      {error ? (
+        <div class="bg-brand-surface p-8 rounded-2xl border border-brand-border text-center">
+          <p class="text-brand-text/60 italic">{error}</p>
+        </div>
+      ) : (
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {latestAnimals.length > 0 ? (
+            latestAnimals.map(animal => <AnimalCard animal={animal} />)
+          ) : (
+            <p class="col-span-full text-center text-brand-text/40 py-12">Животных пока нет в продаже</p>
+          )}
+        </div>
+      )}
+      
+      <div class="mt-8 text-center md:hidden">
+        <a href="/animals" class="inline-block text-brand-accent font-bold py-3 px-6 rounded-lg bg-brand-surface border border-brand-border">
+          Смотреть всех жителей →
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="py-20 px-4">
+    <div class="max-w-7xl mx-auto">
+      <h2 class="text-3xl md:text-4xl font-serif font-bold text-brand-text mb-10 text-center">Всё для ваших питомцев</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {shopCategories.map(cat => <ShopCategoryCard {...cat} />)}
+      </div>
+    </div>
+  </section>
+
+  <section class="py-20 px-4">
+    <div class="max-w-4xl mx-auto bg-brand-text text-brand-bg rounded-[2rem] p-10 md:p-20 text-center relative overflow-hidden">
+      <div class="relative z-10">
+        <h2 class="text-3xl md:text-5xl font-serif font-bold mb-6">Заинтересовал питомец?</h2>
+        <p class="text-brand-bg/70 text-lg mb-10 max-w-xl mx-auto">
+          Мы всегда на связи, чтобы ответить на ваши вопросы и помочь с выбором идеального питомца.
+        </p>
+        <ContactButtons variant="primary" className="justify-center" />
+      </div>
+      <!-- Accent shape -->
+      <div class="absolute -bottom-20 -right-20 w-64 h-64 bg-brand-accent/20 rounded-full blur-3xl"></div>
+      <div class="absolute -top-20 -left-20 w-64 h-64 bg-brand-accent/10 rounded-full blur-3xl"></div>
+    </div>
+  </section>
+
+  <SiteFooter slot="footer" />
+</MainLayout>

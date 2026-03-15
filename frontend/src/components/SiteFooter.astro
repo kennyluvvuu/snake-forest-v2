@@ -1,0 +1,39 @@
+---
+import ContactButtons from './ContactButtons.astro';
+---
+
+<footer class="bg-brand-surface border-t border-brand-border mt-auto">
+  <div class="max-w-7xl mx-auto px-4 py-12 md:px-8">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
+      <div class="space-y-4">
+        <h3 class="text-2xl font-serif font-bold text-brand-text">Змеиный лес</h3>
+        <p class="text-brand-text/70 max-w-xs">
+          Ваш экспертный проводник в мире экзотических животных. Качество, забота и любовь к природе.
+        </p>
+      </div>
+
+      <div class="space-y-4">
+        <h4 class="text-lg font-bold text-brand-text uppercase tracking-wider">Часы работы</h4>
+        <p class="text-brand-text/70">
+          Ежедневно: 10:00 — 21:00<br />
+          Без выходных и перерывов
+        </p>
+      </div>
+
+      <div class="space-y-4">
+        <h4 class="text-lg font-bold text-brand-text uppercase tracking-wider">Связаться с нами</h4>
+        <ContactButtons variant="secondary" />
+      </div>
+    </div>
+
+    <div class="mt-12 pt-8 border-t border-brand-border flex flex-col md:flex-row justify-between items-center gap-4">
+      <p class="text-brand-text/50 text-sm">
+        &copy; {new Date().getFullYear()} Snake Forest. All rights reserved.
+      </p>
+      <div class="flex gap-6 text-sm text-brand-text/50">
+        <a href="#" class="hover:text-brand-text transition-colors">Политика конфиденциальности</a>
+        <a href="#" class="hover:text-brand-text transition-colors">Условия использования</a>
+      </div>
+    </div>
+  </div>
+</footer>

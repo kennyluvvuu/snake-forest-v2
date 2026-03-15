@@ -1,0 +1,99 @@
+---
+import MainLayout from '../../layouts/MainLayout.astro';
+import SiteHeader from '../../components/SiteHeader.astro';
+import SiteFooter from '../../components/SiteFooter.astro';
+import AnimalCard from '../../components/AnimalCard.astro';
+import { apiFetch, type Animal } from '../../lib/api';
+
+let animals: Animal[] = [];
+let error = null;
+
+try {
+  animals = await apiFetch<Animal[]>('/animals/');
+} catch (e) {
+  console.error("Failed to fetch animals catalog:", e);
+  error = "Не удалось загрузить каталог животных";
+}
+
+const speciesOptions = [
+  { id: 'all', label: 'Все' },
+  { id: 'змей', label: 'Змеи' },
+  { id: 'ящер', label: 'Ящерицы' },
+  { id: 'черепа', label: 'Черепахи' },
+  { id: 'грызун', label: 'Грызуны' },
+  { id: 'прочее', label: 'Прочее' }
+];
+---
+
+<MainLayout title="Каталог животных | Змеиный лес">
+  <SiteHeader slot="header" />
+
+  <section class="pt-12 pb-20 px-4">
+    <div class="max-w-7xl mx-auto">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
+        <h1 class="text-4xl md:text-5xl font-serif font-bold text-brand-text">Наши жители</h1>
+        
+        <!-- Filter Chips -->
+        <div class="flex flex-wrap gap-2" id="filter-container">
+          {speciesOptions.map(option => (
+            <button 
+              data-filter={option.id}
+              class={`px-4 py-2 rounded-full text-sm font-medium transition-all ${option.id === 'all' ? 'bg-brand-text text-brand-bg shadow-sm' : 'bg-brand-surface text-brand-text border border-brand-border hover:bg-brand-border/20'}`}
+            >
+              {option.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {error ? (
+        <div class="bg-brand-surface p-12 rounded-3xl border border-brand-border text-center">
+          <p class="text-brand-text/60 italic">{error}</p>
+        </div>
+      ) : (
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-8" id="animal-grid">
+          {animals.length > 0 ? (
+            animals.map(animal => (
+              <div class="animal-item" data-species={animal.species.toLowerCase()}>
+                <AnimalCard animal={animal} />
+              </div>
+            ))
+          ) : (
+            <p class="col-span-full text-center text-brand-text/40 py-20">В данный момент каталог пуст</p>
+          )}
+        </div>
+      )}
+    </div>
+  </section>
+
+  <SiteFooter slot="footer" />
+
+  <script>
+    const filterButtons = document.querySelectorAll('#filter-container button');
+    const animalItems = document.querySelectorAll('.animal-item');
+
+    filterButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        const filter = button.getAttribute('data-filter') || 'all';
+
+        // Update UI
+        filterButtons.forEach(btn => {
+          btn.classList.remove('bg-brand-text', 'text-brand-bg', 'shadow-sm');
+          btn.classList.add('bg-brand-surface', 'text-brand-text', 'border', 'border-brand-border');
+        });
+        button.classList.remove('bg-brand-surface', 'text-brand-text', 'border', 'border-brand-border');
+        button.classList.add('bg-brand-text', 'text-brand-bg', 'shadow-sm');
+
+        // Filter items
+        animalItems.forEach(item => {
+          const species = (item as HTMLElement).dataset.species || '';
+          if (filter === 'all' || species.includes(filter)) {
+            (item as HTMLElement).style.display = 'block';
+          } else {
+            (item as HTMLElement).style.display = 'none';
+          }
+        });
+      });
+    });
+  </script>
+</MainLayout>

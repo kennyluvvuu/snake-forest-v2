@@ -1,0 +1,55 @@
+---
+import type { Animal } from '../lib/api';
+
+interface Props {
+  animal: Animal;
+  loading?: 'lazy' | 'eager';
+}
+
+const { animal, loading = 'lazy' } = Astro.props;
+
+// Use first image from preview or imagesUrl
+const imageUrl = animal.preview?.[0] || (animal as any).imagesUrl?.[0] || 'https://placehold.co/600x400?text=Animal';
+
+const ageLabels = {
+  young: 'Малыш',
+  adult: 'Взрослый',
+  elderly: 'Почтенный'
+};
+---
+
+<a href={`/animals/${animal.id}`} class="group block bg-brand-surface rounded-2xl overflow-hidden border border-brand-border transition-all hover:shadow-lg hover:-translate-y-1">
+  <div class="aspect-[4/3] overflow-hidden bg-brand-bg relative">
+    <img 
+      src={imageUrl} 
+      alt={animal.commonName}
+      loading={loading}
+      class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+    />
+    <div class="absolute top-4 left-4 flex gap-2">
+      <span class="px-3 py-1 bg-brand-bg/80 backdrop-blur-sm text-brand-text text-xs font-medium rounded-full border border-brand-border/50">
+        {ageLabels[animal.age]}
+      </span>
+    </div>
+  </div>
+  
+  <div class="p-5 space-y-2">
+    <div>
+      <h3 class="text-xl font-serif font-bold text-brand-text group-hover:text-brand-accent transition-colors leading-tight">
+        {animal.commonName}
+      </h3>
+      <p class="text-brand-text/60 text-sm font-medium uppercase tracking-wider">
+        {animal.morph}
+      </p>
+    </div>
+    
+    <div class="flex items-center justify-between pt-2">
+      <span class="text-lg font-bold text-brand-text">
+        {animal.price.toLocaleString('ru-RU')} ₽
+      </span>
+      <span class="text-sm text-brand-text/40 hover:text-brand-text transition-colors">
+        Подробнее →
+      </span>
+    </div>
+  </div>
+</a>

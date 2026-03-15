@@ -1,0 +1,39 @@
+---
+import { MessageCircle, Share2 } from '@lucide/astro';
+
+interface Props {
+  className?: string;
+  variant?: 'primary' | 'secondary';
+  showLabels?: boolean;
+}
+
+const { className = "", variant = "primary", showLabels = true } = Astro.props;
+
+const tgLink = import.meta.env.PUBLIC_TG_LINK || "#";
+const vkLink = import.meta.env.PUBLIC_VK_LINK || "#";
+
+const baseStyles = "flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-medium transition-all active:scale-95";
+const primaryStyles = "bg-brand-accent text-brand-text hover:bg-brand-accent/90 shadow-sm";
+const secondaryStyles = "bg-brand-surface text-brand-text border border-brand-border hover:bg-brand-border/20";
+---
+
+<div class={`flex flex-wrap gap-3 ${className}`}>
+  <a 
+    href={tgLink} 
+    target="_blank" 
+    rel="noopener noreferrer" 
+    class={`${baseStyles} ${variant === 'primary' ? primaryStyles : secondaryStyles}`}
+  >
+    <MessageCircle class="w-5 h-5" />
+    {showLabels && <span>Telegram</span>}
+  </a>
+  <a 
+    href={vkLink} 
+    target="_blank" 
+    rel="noopener noreferrer" 
+    class={`${baseStyles} ${variant === 'primary' ? primaryStyles : secondaryStyles}`}
+  >
+    <Share2 class="w-5 h-5" />
+    {showLabels && <span>ВКонтакте</span>}
+  </a>
+</div>
