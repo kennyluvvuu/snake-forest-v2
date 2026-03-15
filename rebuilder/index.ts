@@ -21,12 +21,12 @@ async function runProcess(
     stderr: "pipe",
   });
 
-  const [stdoutText, stderrText] = await Promise.all([
+  const [stdoutText, stderrText, exitCode] = await Promise.all([
     new Response(proc.stdout).text(),
     new Response(proc.stderr).text(),
+    proc.exited,
   ]);
 
-  const exitCode = await proc.exited;
   const output = [stdoutText, stderrText].filter(Boolean).join("\n");
   console.log(`[rebuilder] ${label} finished (exit ${exitCode}):\n${output}`);
 
@@ -34,19 +34,18 @@ async function runProcess(
 }
 
 async function runBuild(): Promise<{ success: boolean; output: string }> {
-  // Step 1: install deps for the current platform (linux musl)
   const install = await runProcess(
-    ["bun", "install", "--frozen-lockfile"],
+    ["bun", "install"],
     "bun install"
   );
   if (!install.success) return install;
 
-  // Step 2: build
   return runProcess(["bun", "run", "build"], "bun build");
 }
 
 Bun.serve({
   port: PORT,
+  idleTimeout: 600, // 10 minutes — prevent Bun from closing idle connections
   async fetch(req: Request) {
     const url = new URL(req.url);
 
@@ -59,7 +58,6 @@ Bun.serve({
 
     // Rebuild endpoint
     if (req.method === "POST" && url.pathname === "/rebuild") {
-      // Auth check
       const authHeader = req.headers.get("Authorization") ?? "";
       const token = authHeader.startsWith("Bearer ")
         ? authHeader.slice(7)
@@ -68,26 +66,28 @@ Bun.serve({
         return unauthorized();
       }
 
+      let result: { success: boolean; output: string };
       try {
-        const { success, output } = await runBuild();
-        if (success) {
-          return new Response(JSON.stringify({ ok: true }), {
-            headers: { "Content-Type": "application/json" },
-          });
-        } else {
-          return new Response(
-            JSON.stringify({ ok: false, error: output.slice(-2000) }),
-            {
-              status: 500,
-              headers: { "Content-Type": "application/json" },
-            }
-          );
-        }
+        result = await runBuild();
       } catch (err) {
         const message = err instanceof Error ? err.message : String(err);
         console.error("[rebuilder] Unexpected error:", message);
         return new Response(
           JSON.stringify({ ok: false, error: message }),
+          {
+            status: 500,
+            headers: { "Content-Type": "application/json" },
+          }
+        );
+      }
+
+      if (result.success) {
+        return new Response(JSON.stringify({ ok: true }), {
+          headers: { "Content-Type": "application/json" },
+        });
+      } else {
+        return new Response(
+          JSON.stringify({ ok: false, error: result.output.slice(-2000) }),
           {
             status: 500,
             headers: { "Content-Type": "application/json" },
