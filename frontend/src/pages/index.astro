@@ -22,19 +22,19 @@ const shopCategories = [
   {
     title: "Оборудование",
     description: "Лампы, термостаты, поилки, укрытия и 3D-декор",
-    image: "https://images.unsplash.com/photo-1629882495260-db32d19b1c99?q=80&w=800&auto=format&fit=crop",
+    image: "https://sun9-39.userapi.com/s/v1/ig2/KHtyaTB0z4AJY5jCzHQaac1-23oVCHN13ogXfFGAn4avUmgD-ElTu4kGUcBR9OfHfSluR04Z9feECSETqJ8KR7Nc.jpg?quality=95&as=32x43,48x64,72x96,108x144,160x213,240x320,360x480,480x640,540x720,640x853,720x960,960x1280&from=bu&cs=960x0",
     href: "/shop?type=usable"
   },
   {
     title: "Корм",
     description: "Замороженные и живые корма для всех видов",
-    image: "https://images.unsplash.com/photo-1594493309990-255d6447817a?q=80&w=800&auto=format&fit=crop",
+    image: "https://content.onliner.by/fleamarket/941535/800x800/11bf5dd7a754fba5fe52767fd730e83a.jpg",
     href: "/shop?type=food"
   },
   {
     title: "Игрушки",
-    description: "Для активных и любознательных питомцев",
-    image: "https://images.unsplash.com/photo-1623914017163-5477d64388cc?q=80&w=800&auto=format&fit=crop",
+    description: "Когда хочется развлечь не только питомцев",
+    image: "https://cdn.thingiverse.com/assets/ed/91/ca/d5/52/2b2c5d7f-141f-4e19-bf04-b7429bd0fb99.webp",
     href: "/shop?type=toy"
   }
 ];
@@ -112,7 +112,7 @@ const shopCategories = [
 
   <section class="py-20 px-4">
     <div class="max-w-7xl mx-auto">
-      <h2 class="text-3xl md:text-4xl font-serif font-bold text-brand-text mb-10 text-center">Всё для ваших питомцев</h2>
+      <h2 class="text-3xl md:text-4xl font-serif font-bold text-brand-text mb-10 text-center">Всё для вас и ваших питомцев</h2>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         {shopCategories.map(cat => <ShopCategoryCard {...cat} />)}
       </div>
