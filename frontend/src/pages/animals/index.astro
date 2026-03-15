@@ -51,7 +51,7 @@ const speciesOptions = [
           <p class="text-brand-text/60 italic">{error}</p>
         </div>
       ) : (
-        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-8" id="animal-grid">
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-8" id="animal-grid">
           {animals.length > 0 ? (
             animals.map(animal => (
               <div class="animal-item" data-species={animal.species.toLowerCase()}>
