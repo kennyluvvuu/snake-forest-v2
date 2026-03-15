@@ -16,12 +16,4 @@ const ProductModel = new mongoose.Schema({
     description: { type: String, required: true },
 });
 
-// middlewares
-
-ProductModel.pre("save", async function () {
-    if (!this.images || this.images.length === 0) {
-        this.images = ["/uploads/products/default.jpeg"];
-    }
-});
-
 export const Product = mongoose.model("Product", ProductModel);

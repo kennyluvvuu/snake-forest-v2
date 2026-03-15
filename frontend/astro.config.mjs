@@ -9,6 +9,11 @@ export default defineConfig({
     mode: 'standalone'
   }),
   vite: {
-    plugins: [tailwindcss()]
+    plugins: [tailwindcss()],
+    server: {
+      proxy: {
+        '/uploads': 'http://localhost'
+      }
+    }
   }
 });

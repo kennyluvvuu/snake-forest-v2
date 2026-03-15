@@ -5,7 +5,7 @@ import SiteFooter from '../components/SiteFooter.astro';
 import AnimalCard from '../components/AnimalCard.astro';
 import ShopCategoryCard from '../components/ShopCategoryCard.astro';
 import ContactButtons from '../components/ContactButtons.astro';
-import { apiFetch, type Animal } from '../lib/api';
+import { apiFetch, type Animal } from '@/lib/api.ts';
 
 let latestAnimals: Animal[] = [];
 let error = null;
@@ -43,26 +43,37 @@ const shopCategories = [
 <MainLayout>
   <SiteHeader slot="header" />
   
-  <section class="relative pt-20 pb-16 md:pt-32 md:pb-24 px-4 overflow-hidden">
+  <section class="relative pt-24 pb-20 md:pt-48 md:pb-40 px-4 overflow-hidden flex items-center justify-center min-h-[70vh]">
+    <!-- Background Content -->
+    <div class="absolute inset-0 z-0 select-none pointer-events-none">
+      <img 
+        src="index_hero.jpg" 
+        alt="Forest Background" 
+        class="w-full h-full object-cover"
+        loading="eager"
+      />
+      <!-- Glassmorphic Overlay for Readability -->
+      <div class="absolute inset-0 bg-brand-bg/70 backdrop-blur-[1px]"></div>
+      <!-- Vignette and Gradient for depth -->
+      <div class="absolute inset-0 bg-gradient-to-b from-brand-bg/30 via-transparent to-brand-bg"></div>
+    </div>
+
     <div class="max-w-7xl mx-auto text-center relative z-10">
-      <h1 class="text-5xl md:text-8xl font-serif font-bold text-brand-text mb-6 tracking-tight">
+      <h1 class="text-7xl md:text-9xl font-serif font-bold text-brand-text mb-6 tracking-tight drop-shadow-sm">
         Змеиный <span class="text-brand-accent italic">лес</span>
       </h1>
-      <p class="text-xl md:text-2xl text-brand-text/70 mb-10 max-w-2xl mx-auto leading-relaxed">
+      <p class="text-xl md:text-3xl text-brand-text/80 mb-12 max-w-3xl mx-auto leading-relaxed font-medium">
         Уникальная коллекция экзотических животных и профессиональное оборудование для их содержания.
       </p>
-      <div class="flex flex-col sm:flex-row gap-4 justify-center">
-        <a href="/animals" class="bg-brand-text text-brand-bg px-10 py-4 rounded-xl font-bold text-lg transition-transform hover:scale-105 active:scale-95">
+      <div class="flex flex-col sm:flex-row gap-6 justify-center">
+        <a href="/animals" class="bg-brand-text text-brand-bg px-12 py-5 rounded-2xl font-bold text-xl transition-all hover:scale-105 hover:shadow-xl active:scale-95">
           Животные
         </a>
-        <a href="/shop" class="bg-brand-surface text-brand-text border border-brand-border px-10 py-4 rounded-xl font-bold text-lg transition-transform hover:scale-105 active:scale-95">
+        <a href="/shop" class="bg-brand-surface/80 backdrop-blur-sm text-brand-text border border-brand-border px-12 py-5 rounded-2xl font-bold text-xl transition-all hover:scale-105 hover:shadow-xl active:scale-95">
           Товары
         </a>
       </div>
     </div>
-    
-    <!-- Background Decor -->
-    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[150%] h-[150%] bg-radial-gradient from-brand-accent/5 to-transparent pointer-events-none"></div>
   </section>
 
   <section class="py-16 px-4 bg-brand-surface/50 border-y border-brand-border">

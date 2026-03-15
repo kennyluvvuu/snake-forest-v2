@@ -1,5 +1,5 @@
 ---
-import type { Animal } from '../lib/api';
+import type { Animal } from '@/lib/api.ts';
 
 interface Props {
   animal: Animal;
@@ -14,7 +14,7 @@ const imageUrl = animal.preview?.[0] || (animal as any).imagesUrl?.[0] || 'https
 const ageLabels = {
   young: 'Малыш',
   adult: 'Взрослый',
-  elderly: 'Почтенный'
+  elderly: 'Пожилой'
 };
 ---
 

@@ -20,12 +20,4 @@ const AnimalModel = new mongoose.Schema({
     description: { type: String, required: true },
 });
 
-// middlewares
-
-AnimalModel.pre("save", async function () {
-    if (!this.images || this.images.length === 0) {
-        this.images = ["/uploads/animals/default.jpeg"];
-    }
-});
-
 export const Animal = mongoose.model("Animal", AnimalModel);

@@ -1,28 +1,166 @@
 ---
-import { Search } from '@lucide/astro';
+import { Search, Menu, X } from '@lucide/astro';
+
+const navLinks = [
+  { name: 'Главная', href: '/' },
+  { name: 'Животные', href: '/animals' },
+  { name: 'Товары', href: '/shop' },
+  { name: 'О нас', href: '/about' },
+  { name: 'Контакты', href: '/contacts' },
+];
 ---
 
-<header class="sticky top-0 z-50 w-full bg-brand-bg/80 backdrop-blur-md border-b border-brand-border px-4 py-4 md:px-8">
+<header id="main-header" class="sticky top-0 z-50 w-full bg-brand-bg/80 backdrop-blur-md border-b border-brand-border px-4 py-4 md:px-8">
   <div class="max-w-7xl mx-auto flex items-center justify-between">
-    <a href="/" class="flex items-center group" aria-label="Snake Forest Home">
-      <svg viewBox="0 0 400 60" class="h-10 md:h-12 w-auto fill-brand-text transition-transform group-hover:scale-[1.02]">
-        <text x="0" y="45" font-family="'Playfair Display', serif" font-weight="700" font-size="40">
-          SNAKE F<tspan dx="-2"> </tspan>REST
+    <a href="/" class="flex items-center group z-50" aria-label="Snake Forest Home">
+      <svg viewBox="0 0 400 60" class="h-8 md:h-12 w-auto fill-brand-text transition-transform group-hover:scale-[1.02]">
+        <text x="10" y="45" font-family="'Playfair Display', serif" font-weight="700" font-size="40">
+          SF
         </text>
-        <!-- The Eye in O -->
-        <g transform="translate(172, 30)">
-          <circle cx="0" cy="0" r="18" fill="var(--color-brand-text)" />
-          <ellipse cx="0" cy="0" rx="14" ry="10" fill="var(--color-teal-eye)" />
-          <path d="M -14 0 Q 0 -12 14 0 Q 0 12 -14 0" fill="none" stroke="var(--color-brand-text)" stroke-width="1.5" />
-          <rect x="-1" y="-6" width="2" height="12" rx="1" fill="var(--color-brand-text)" />
-        </g>
       </svg>
     </a>
 
-    <div class="flex items-center gap-4">
+    <!-- Desktop Navigation -->
+    <nav class="hidden md:flex items-center gap-8">
+      {navLinks.map(link => (
+        <a href={link.href} class="text-brand-text/80 hover:text-brand-accent transition-colors font-medium">
+          {link.name}
+        </a>
+      ))}
+    </nav>
+
+    <div class="flex items-center gap-2 md:gap-4">
       <button class="p-2 hover:bg-brand-surface rounded-full transition-colors" aria-label="Search">
         <Search class="w-5 h-5" />
       </button>
+      
+      <!-- Mobile Menu Toggle -->
+      <button 
+        id="menu-toggle" 
+        class="p-2 md:hidden hover:bg-brand-surface rounded-full transition-colors z-50" 
+        aria-label="Toggle Menu"
+      >
+        <Menu id="menu-icon" class="w-6 h-6" />
+        <X id="close-icon" class="w-6 h-6 hidden" />
+      </button>
     </div>
   </div>
+
 </header>
+
+<!-- Mobile Menu Overlay -->
+<div 
+  id="mobile-menu" 
+  class="fixed inset-0 bg-brand-bg/60 backdrop-blur-2xl z-40 transform translate-x-full transition-transform duration-500 ease-apple md:hidden"
+>
+  <div class="flex flex-col h-full pt-24 px-8">
+    <nav class="flex flex-col gap-6">
+      {navLinks.map((link, index) => (
+        <a 
+          href={link.href} 
+          class="text-4xl font-serif font-bold text-brand-text hover:text-brand-accent transition-all duration-300 opacity-0 transform translate-y-4 nav-link-item"
+          style={`transition-delay: ${index * 50}ms`}
+        >
+          {link.name}
+        </a>
+      ))}
+    </nav>
+    
+    <div class="mt-auto pb-12 opacity-0 transform translate-y-4 menu-footer transition-all duration-500 delay-300">
+      <p class="text-brand-text/40 text-sm mb-4 uppercase tracking-widest">Будем на связи</p>
+      <div class="flex gap-4">
+        <a href="#" class="text-brand-text/60 hover:text-brand-accent">Telegram</a>
+        <a href="#" class="text-brand-text/60 hover:text-brand-accent">WhatsApp</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const menuToggle = document.getElementById('menu-toggle');
+  const mobileMenu = document.getElementById('mobile-menu');
+  const menuIcon = document.getElementById('menu-icon');
+  const closeIcon = document.getElementById('close-icon');
+  const body = document.body;
+  const navLinks = document.querySelectorAll('.nav-link-item');
+  const menuFooter = document.querySelector('.menu-footer');
+
+  function toggleMenu() {
+    const isOpen = mobileMenu?.classList.contains('translate-x-0');
+    const header = document.querySelector('header');
+    
+    if (isOpen) {
+      // Close menu
+      mobileMenu?.classList.replace('translate-x-0', 'translate-x-full');
+      menuIcon?.classList.remove('hidden');
+      closeIcon?.classList.add('hidden');
+      body.style.overflow = '';
+      
+      // Restore header styling
+      header?.classList.remove('bg-transparent', 'backdrop-blur-none');
+      header?.classList.add('bg-brand-bg/80', 'backdrop-blur-md');
+      
+      navLinks.forEach(link => {
+        (link as HTMLElement).classList.remove('opacity-100', 'translate-y-0');
+        (link as HTMLElement).classList.add('opacity-0', 'translate-y-4');
+      });
+      menuFooter?.classList.remove('opacity-100', 'translate-y-0');
+      menuFooter?.classList.add('opacity-0', 'translate-y-4');
+    } else {
+      // Open menu
+      mobileMenu?.classList.replace('translate-x-full', 'translate-x-0');
+      menuIcon?.classList.add('hidden');
+      closeIcon?.classList.remove('hidden');
+      body.style.overflow = 'hidden';
+      
+      // Make header transparent and remove its blur to let menu blur shine through
+      header?.classList.remove('bg-brand-bg/80', 'backdrop-blur-md');
+      header?.classList.add('bg-transparent', 'backdrop-blur-none');
+      
+      // Animate items in
+      setTimeout(() => {
+        navLinks.forEach(link => {
+          (link as HTMLElement).classList.remove('opacity-0', 'translate-y-4');
+          (link as HTMLElement).classList.add('opacity-100', 'translate-y-0');
+        });
+        menuFooter?.classList.remove('opacity-0', 'translate-y-4');
+        menuFooter?.classList.add('opacity-100', 'translate-y-0');
+      }, 100);
+    }
+  }
+
+  menuToggle?.addEventListener('click', toggleMenu);
+
+  // Close menu on link click
+  navLinks.forEach(link => {
+    link.addEventListener('click', () => {
+      if (mobileMenu?.classList.contains('translate-x-0')) {
+        toggleMenu();
+      }
+    });
+  });
+</script>
+
+<style>
+  .ease-apple {
+    transition-timing-function: cubic-bezier(0.25, 0.1, 0.25, 1);
+  }
+
+  /* Support for Safari and older browsers */
+  #main-header, #mobile-menu {
+    -webkit-backdrop-filter: blur(var(--blur-amount, 12px));
+  }
+
+  #main-header {
+    --blur-amount: 12px; /* backdrop-blur-md */
+  }
+
+  #mobile-menu {
+    --blur-amount: 40px; /* backdrop-blur-2xl */
+  }
+
+  .backdrop-blur-none {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+  }
+</style>

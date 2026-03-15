@@ -3,7 +3,7 @@ import MainLayout from '../../layouts/MainLayout.astro';
 import SiteHeader from '../../components/SiteHeader.astro';
 import SiteFooter from '../../components/SiteFooter.astro';
 import AnimalCard from '../../components/AnimalCard.astro';
-import { apiFetch, type Animal } from '../../lib/api';
+import { apiFetch, type Animal } from '@/lib/api.ts';
 
 let animals: Animal[] = [];
 let error = null;
@@ -17,11 +17,11 @@ try {
 
 const speciesOptions = [
   { id: 'all', label: 'Все' },
-  { id: 'змей', label: 'Змеи' },
-  { id: 'ящер', label: 'Ящерицы' },
-  { id: 'черепа', label: 'Черепахи' },
-  { id: 'грызун', label: 'Грызуны' },
-  { id: 'прочее', label: 'Прочее' }
+  { id: 'snake', label: 'Змеи' },
+  { id: 'lizard', label: 'Ящерицы' },
+  { id: 'turtle', label: 'Черепахи' },
+  { id: 'rodent', label: 'Грызуны' },
+  { id: 'other', label: 'Прочее' }
 ];
 ---
 
