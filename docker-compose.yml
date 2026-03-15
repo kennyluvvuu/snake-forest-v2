@@ -20,6 +20,7 @@ services:
         volumes:
             - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
             - uploads_data:/var/www/uploads:ro
+            - dist_data:/var/www/dist:ro
         depends_on:
             - backend
 
@@ -45,7 +46,25 @@ services:
         depends_on:
             - backend
             - nginx
+            - rebuilder
         extra_hosts:
             - "host.docker.internal:host-gateway"
+
+    rebuilder:
+        build: rebuilder
+        container_name: rebuilder
+        env_file:
+            - .env
+        environment:
+            - FRONTEND_DIR=/app/frontend
+            - PUBLIC_API_BASE_URL=http://backend-bun:8080
+        depends_on:
+            - backend
+        volumes:
+            - ./frontend:/app/frontend
+            - /app/frontend/node_modules
+            - dist_data:/app/frontend/dist
+
 volumes:
     uploads_data:
+    dist_data:

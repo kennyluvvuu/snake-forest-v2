@@ -9,6 +9,8 @@ class Settings(BaseSettings):
     api_base_url: str
     api_key: str
     admin_ids: list[int] = []
+    rebuild_secret: str = ""
+    rebuilder_url: str = "http://rebuilder:3001"
 
     @field_validator("admin_ids", mode="before")
     @classmethod

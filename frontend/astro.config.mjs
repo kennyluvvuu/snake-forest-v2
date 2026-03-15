@@ -6,10 +6,5 @@ export default defineConfig({
     output: "static",
     vite: {
         plugins: [tailwindcss()],
-        server: {
-            proxy: {
-                "/uploads": "http://localhost",
-            },
-        },
     },
 });

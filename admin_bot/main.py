@@ -10,6 +10,7 @@ from api.client import build_client
 from bot.middlewares.auth import AdminMiddleware
 from bot.handlers import (
     common,
+    rebuild,
     list_animals,
     view_animal,
     create_animal,
@@ -44,6 +45,7 @@ async def main() -> None:
 
     # ── Register routers (order matters for priority) ──────────────────────────
     dp.include_router(common.router)
+    dp.include_router(rebuild.router)
     # Animals
     dp.include_router(create_animal.router)
     dp.include_router(edit_animal.router)
