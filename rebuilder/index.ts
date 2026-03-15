@@ -45,7 +45,7 @@ async function runBuild(): Promise<{ success: boolean; output: string }> {
 
 Bun.serve({
   port: PORT,
-  idleTimeout: 600, // 10 minutes — prevent Bun from closing idle connections
+  idleTimeout: 255, // 255 secs — prevent Bun from closing idle connections
   async fetch(req: Request) {
     const url = new URL(req.url);
 
