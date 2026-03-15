@@ -12,7 +12,7 @@ import slugify from "slugify";
 
 export default class ProductController implements IProductController {
     async create(req: CreateProductReq): Promise<CreateProductRes> {
-        let baseSlug = slugify(req.name);
+        let baseSlug = slugify(req.name, { lower: true });
         let slug = baseSlug;
         let counter = 1;
         while (await Product.findOne({ slug })) {

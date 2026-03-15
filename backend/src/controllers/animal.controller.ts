@@ -12,7 +12,9 @@ import slugify from "slugify";
 
 export default class AnimalController implements IAnimalController {
     async create(req: CreateAnimalReq): Promise<CreateAnimalRes> {
-        let baseSlug = slugify(req.commonName + " " + req.morph);
+        let baseSlug = slugify(req.commonName + " " + req.morph, {
+            lower: true,
+        });
         let slug = baseSlug;
         let counter = 1;
         while (await Animal.findOne({ slug })) {
