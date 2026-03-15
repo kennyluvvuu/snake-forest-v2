@@ -70,6 +70,28 @@ export default class AnimalController implements IAnimalController {
         };
     }
 
+    async getBySlug(slug: string): Promise<GetAnimalRes | null> {
+        const fullAnimal = await Animal.findOne({ slug });
+
+        if (!fullAnimal) {
+            return null;
+        }
+
+        return {
+            id: fullAnimal.id,
+            slug: fullAnimal.slug,
+            commonName: fullAnimal.commonName,
+            species: fullAnimal.species,
+            morph: fullAnimal.morph,
+            age: fullAnimal.age,
+            sex: fullAnimal.sex,
+            priority: fullAnimal.priority,
+            price: fullAnimal.price,
+            description: fullAnimal.description,
+            imagesUrl: fullAnimal.images,
+        };
+    }
+
     async getPreviews(): Promise<Array<GetAnimalPreviewRes> | null> {
         const animalPreviews = await Animal.find().select({
             description: 0,

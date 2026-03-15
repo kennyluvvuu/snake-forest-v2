@@ -10,6 +10,7 @@ import {
 export default interface IAnimalController {
     create: (req: CreateAnimalReq) => Promise<CreateAnimalRes>;
     get: (id: string) => Promise<GetAnimalRes | null>;
+    getBySlug: (slug: string) => Promise<GetAnimalRes | null>;
     getPreviews: () => Promise<Array<GetAnimalPreviewRes> | null>;
     update: (
         req: UpdateAnimalReq,

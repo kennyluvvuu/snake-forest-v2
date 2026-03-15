@@ -58,6 +58,24 @@ export default class ProductController implements IProductController {
         };
     }
 
+    async getBySlug(slug: string): Promise<GetProductRes | null> {
+        const product = await Product.findOne({ slug });
+
+        if (!product) {
+            return null;
+        }
+
+        return {
+            id: product.id,
+            slug: product.slug,
+            name: product.name,
+            price: product.price,
+            type: product.type as "toy" | "usable" | "food",
+            description: product.description,
+            imagesUrl: product.images,
+        };
+    }
+
     async getPreviews(): Promise<Array<GetProductPreviewRes> | null> {
         const productPreviews = await Product.find().select({
             description: 0,

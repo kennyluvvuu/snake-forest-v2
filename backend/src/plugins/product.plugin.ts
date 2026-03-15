@@ -48,10 +48,10 @@ const productRoutes: FastifyPluginAsyncZod = async (fastify, options) => {
     );
 
     fastify.get(
-        "/:id",
+        "/:slug",
         {
             schema: {
-                params: schemas.UrlParamsIdSchema,
+                params: schemas.UrlParamsSlugSchema,
                 response: {
                     200: schemas.ProductSchema,
                     404: errorSchemas.NotFoundErrorSchema,
@@ -61,7 +61,7 @@ const productRoutes: FastifyPluginAsyncZod = async (fastify, options) => {
         },
         async (request, reply) => {
             try {
-                const product = await productController.get(request.params.id);
+                const product = await productController.getBySlug(request.params.slug);
                 if (!product) {
                     return reply.code(404).send({
                         statusCode: 404,

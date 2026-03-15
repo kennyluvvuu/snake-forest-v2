@@ -48,3 +48,7 @@ export const UrlParamsIdSchema = z.object({
         message: "Invalid product id format.",
     }),
 });
+
+export const UrlParamsSlugSchema = z.object({
+    slug: z.string().min(1, { message: "Slug is required." }),
+});
