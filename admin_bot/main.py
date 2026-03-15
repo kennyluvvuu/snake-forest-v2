@@ -16,6 +16,12 @@ from bot.handlers import (
     edit_animal,
     delete_animal,
     images,
+    list_products,
+    view_product,
+    create_product,
+    edit_product,
+    delete_product,
+    product_images,
 )
 from config import settings
 
@@ -38,12 +44,20 @@ async def main() -> None:
 
     # ── Register routers (order matters for priority) ──────────────────────────
     dp.include_router(common.router)
+    # Animals
     dp.include_router(create_animal.router)
     dp.include_router(edit_animal.router)
     dp.include_router(images.router)
     dp.include_router(delete_animal.router)
     dp.include_router(view_animal.router)
     dp.include_router(list_animals.router)
+    # Products
+    dp.include_router(create_product.router)
+    dp.include_router(edit_product.router)
+    dp.include_router(product_images.router)
+    dp.include_router(delete_product.router)
+    dp.include_router(view_product.router)
+    dp.include_router(list_products.router)
 
     # ── Lifecycle: create shared httpx client, inject into workflow_data ───────
     api_client = build_client()
