@@ -3,43 +3,17 @@ import MainLayout from '../layouts/MainLayout.astro';
 import SiteHeader from '../components/SiteHeader.astro';
 import SiteFooter from '../components/SiteFooter.astro';
 import ProductCard from '../components/ProductCard.astro';
-import type { Product } from '@/lib/api.ts';
+import { apiFetch, type Product } from '@/lib/api.ts';
 
-// Static placeholder products for now
-const placeholders: Product[] = [
-  {
-    id: 'u1',
-    name: 'Набор ламп для террариума (UVB 5.0 + Heat)',
-    price: 3450,
-    type: 'usable',
-    preview: ['https://images.unsplash.com/photo-1629882495260-db32d19b1c99?q=80&w=600&auto=format&fit=crop'],
-    description: 'Полный комплект освещения для средних террариумов.'
-  },
-  {
-    id: 'f1',
-    name: 'Замороженные мыши (голыши), 10 шт',
-    price: 1200,
-    type: 'food',
-    preview: ['https://images.unsplash.com/photo-1594493309990-255d6447817a?q=80&w=600&auto=format&fit=crop'],
-    description: 'Питательный корм для молодых змей и ящериц.'
-  },
-  {
-    id: 't1',
-    name: 'Интерактивная коряга-укрытие 3D',
-    price: 2100,
-    type: 'toy',
-    preview: ['https://images.unsplash.com/photo-1623914017163-5477d64388cc?q=80&w=600&auto=format&fit=crop'],
-    description: 'Красивое и функциональное укрытие из экологичного пластика.'
-  },
-  {
-    id: 'u2',
-    name: 'Термостат цифровой STC-1000',
-    price: 4200,
-    type: 'usable',
-    preview: ['https://images.unsplash.com/photo-1585675100414-add2e465a136?q=80&w=600&auto=format&fit=crop'],
-    description: 'Высокоточное управление температурой в вашем террариуме.'
-  }
-];
+let products: Product[] = [];
+let error = null;
+
+try {
+  products = await apiFetch<Product[]>('/products/');
+} catch (e) {
+  console.error("Failed to fetch products catalog:", e);
+  error = "Не удалось загрузить каталог товаров";
+}
 
 const tabs = [
   { id: 'all', label: 'Все товары' },
@@ -57,25 +31,37 @@ const tabs = [
       <h1 class="text-4xl md:text-5xl font-serif font-bold text-brand-text mb-8">Магазин</h1>
       
       <!-- Tabs -->
-      <div class="flex flex-wrap gap-1 p-1 bg-brand-surface rounded-2xl border border-brand-border inline-flex w-full md:w-auto" id="shop-tabs">
-        {tabs.map(tab => (
-          <button 
-            data-tab={tab.id}
-            class={`px-6 py-2 rounded-xl text-sm font-bold transition-all ${tab.id === 'all' ? 'bg-brand-bg text-brand-text shadow-sm' : 'text-brand-text/50 hover:text-brand-text'}`}
-          >
-            {tab.label}
-          </button>
-        ))}
+      <div class="overflow-x-auto">
+        <div class="flex gap-1 p-1 bg-brand-surface rounded-2xl border border-brand-border w-max" id="filter-container">
+          {tabs.map(tab => (
+            <button 
+              data-filter={tab.id}
+              class={`px-6 py-2 rounded-xl text-sm font-bold transition-all ${tab.id === 'all' ? 'bg-brand-bg text-brand-text shadow-sm' : 'text-brand-text/50 hover:text-brand-text'}`}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
       </div>
     </div>
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-8" id="product-grid">
-      {placeholders.map(product => (
-        <div class="product-item" data-type={product.type}>
-          <ProductCard product={product} />
-        </div>
-      ))}
-    </div>
+    {error ? (
+      <div class="bg-brand-surface p-12 rounded-3xl border border-brand-border text-center">
+        <p class="text-brand-text/60 italic">{error}</p>
+      </div>
+    ) : (
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-8">
+        {products.length > 0 ? (
+          products.map(product => (
+            <div class="filter-item" data-type={product.type}>
+              <ProductCard product={product} />
+            </div>
+          ))
+        ) : (
+          <p class="col-span-full text-center text-brand-text/40 py-20">В данный момент каталог товаров пуст</p>
+        )}
+      </div>
+    )}
     
     <div class="mt-20 bg-brand-accent/10 border border-brand-accent/20 rounded-3xl p-8 md:p-12 text-center">
       <h2 class="text-2xl font-serif font-bold text-brand-text mb-4">Не нашли что искали?</h2>
@@ -94,31 +80,14 @@ const tabs = [
   <SiteFooter slot="footer" />
 
   <script>
-    const tabButtons = document.querySelectorAll('#shop-tabs button');
-    const productItems = document.querySelectorAll('.product-item');
+    import { initFilter } from '@/scripts/filter.ts';
 
-    tabButtons.forEach(button => {
-      button.addEventListener('click', () => {
-        const tab = button.getAttribute('data-tab') || 'all';
-
-        // Update UI
-        tabButtons.forEach(btn => {
-          btn.classList.remove('bg-brand-bg', 'text-brand-text', 'shadow-sm');
-          btn.classList.add('text-brand-text/50');
-        });
-        button.classList.add('bg-brand-bg', 'text-brand-text', 'shadow-sm');
-        button.classList.remove('text-brand-text/50');
-
-        // Filter items
-        productItems.forEach(item => {
-          const type = (item as HTMLElement).dataset.type;
-          if (tab === 'all' || type === tab) {
-            (item as HTMLElement).style.display = 'block';
-          } else {
-            (item as HTMLElement).style.display = 'none';
-          }
-        });
-      });
+    initFilter({
+      filterContainerSelector: '#filter-container',
+      itemSelector: '.filter-item',
+      itemDataKey: 'type',
+      activeClasses: ['bg-brand-bg', 'text-brand-text', 'shadow-sm'],
+      inactiveClasses: ['text-brand-text/50'],
     });
   </script>
 </MainLayout>

@@ -30,20 +30,21 @@ const speciesOptions = [
 
   <section class="pt-12 pb-20 px-4">
     <div class="max-w-7xl mx-auto">
-      <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
-        <h1 class="text-4xl md:text-5xl font-serif font-bold text-brand-text">Наши жители</h1>
+      <div class="mb-12">
+        <h1 class="text-4xl md:text-5xl font-serif font-bold text-brand-text mb-8">Наши жители</h1>
         
-        <!-- Filter Chips -->
-        <div class="flex flex-wrap gap-2" id="filter-container">
+        <!-- Tabs -->
+      <div class="overflow-x-auto">
+        <div class="flex gap-1 p-1 bg-brand-surface rounded-2xl border border-brand-border w-max" id="filter-container">
           {speciesOptions.map(option => (
             <button 
               data-filter={option.id}
-              class={`px-4 py-2 rounded-full text-sm font-medium transition-all ${option.id === 'all' ? 'bg-brand-text text-brand-bg shadow-sm' : 'bg-brand-surface text-brand-text border border-brand-border hover:bg-brand-border/20'}`}
+              class={`px-6 py-2 rounded-xl text-sm font-bold transition-all ${option.id === 'all' ? 'bg-brand-bg text-brand-text shadow-sm' : 'text-brand-text/50 hover:text-brand-text'}`}
             >
               {option.label}
             </button>
           ))}
-        </div>
+        </div></div>
       </div>
 
       {error ? (
@@ -54,7 +55,7 @@ const speciesOptions = [
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-8" id="animal-grid">
           {animals.length > 0 ? (
             animals.map(animal => (
-              <div class="animal-item" data-species={animal.species.toLowerCase()}>
+              <div class="filter-item" data-species={animal.species.toLowerCase()}>
                 <AnimalCard animal={animal} />
               </div>
             ))
@@ -69,31 +70,14 @@ const speciesOptions = [
   <SiteFooter slot="footer" />
 
   <script>
-    const filterButtons = document.querySelectorAll('#filter-container button');
-    const animalItems = document.querySelectorAll('.animal-item');
+    import { initFilter } from '@/scripts/filter.ts';
 
-    filterButtons.forEach(button => {
-      button.addEventListener('click', () => {
-        const filter = button.getAttribute('data-filter') || 'all';
-
-        // Update UI
-        filterButtons.forEach(btn => {
-          btn.classList.remove('bg-brand-text', 'text-brand-bg', 'shadow-sm');
-          btn.classList.add('bg-brand-surface', 'text-brand-text', 'border', 'border-brand-border');
-        });
-        button.classList.remove('bg-brand-surface', 'text-brand-text', 'border', 'border-brand-border');
-        button.classList.add('bg-brand-text', 'text-brand-bg', 'shadow-sm');
-
-        // Filter items
-        animalItems.forEach(item => {
-          const species = (item as HTMLElement).dataset.species || '';
-          if (filter === 'all' || species.includes(filter)) {
-            (item as HTMLElement).style.display = 'block';
-          } else {
-            (item as HTMLElement).style.display = 'none';
-          }
-        });
-      });
+    initFilter({
+      filterContainerSelector: '#filter-container',
+      itemSelector: '.filter-item',
+      itemDataKey: 'species',
+      activeClasses: ['bg-brand-bg', 'text-brand-text', 'shadow-sm'],
+      inactiveClasses: ['text-brand-text/50'],
     });
   </script>
 </MainLayout>

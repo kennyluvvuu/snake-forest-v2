@@ -1,5 +1,7 @@
 ---
 import type { Animal } from '@/lib/api.ts';
+import Badge from './ui/badge.astro';
+import { ArrowRight } from '@lucide/astro';
 
 interface Props {
   animal: Animal;
@@ -8,10 +10,9 @@ interface Props {
 
 const { animal, loading = 'lazy' } = Astro.props;
 
-// Use first image from preview or imagesUrl
 const imageUrl = animal.preview?.[0] || (animal as any).imagesUrl?.[0] || 'https://placehold.co/600x400?text=Animal';
 
-const ageLabels = {
+const ageLabels: Record<string, string> = {
   young: 'Малыш',
   adult: 'Взрослый',
   elderly: 'Пожилой'
@@ -26,10 +27,8 @@ const ageLabels = {
       loading={loading}
       class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
     />
-    <div class="absolute top-4 left-4 flex gap-2">
-      <span class="px-3 py-1 bg-brand-bg/90 backdrop-blur-md text-brand-text text-[10px] sm:text-xs font-bold uppercase tracking-wider rounded-full border border-brand-border/50 shadow-sm">
-        {ageLabels[animal.age]}
-      </span>
+    <div class="absolute top-4 left-4">
+      <Badge>{ageLabels[animal.age]}</Badge>
     </div>
   </div>
   
@@ -49,7 +48,7 @@ const ageLabels = {
       </span>
       <span class="text-sm font-bold text-brand-accent/80 group-hover:text-brand-accent transition-all flex items-center gap-1">
         Смотреть
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="transition-transform group-hover:translate-x-1"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+        <ArrowRight class="w-4 h-4 transition-transform group-hover:translate-x-1" />
       </span>
     </div>
   </div>

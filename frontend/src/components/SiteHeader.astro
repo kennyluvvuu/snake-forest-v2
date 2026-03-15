@@ -1,5 +1,6 @@
 ---
 import { Search, Menu, X } from '@lucide/astro';
+import Button from './ui/button.astro';
 
 const navLinks = [
   { name: 'Главная', href: '/' },
@@ -29,20 +30,22 @@ const navLinks = [
       ))}
     </nav>
 
-    <div class="flex items-center gap-2 md:gap-4">
-      <button class="p-2 hover:bg-brand-surface rounded-full transition-colors" aria-label="Search">
+    <div class="flex items-center gap-1 md:gap-2">
+      <Button variant="ghost" size="icon" ariaLabel="Поиск">
         <Search class="w-5 h-5" />
-      </button>
+      </Button>
       
       <!-- Mobile Menu Toggle -->
-      <button 
-        id="menu-toggle" 
-        class="p-2 md:hidden hover:bg-brand-surface rounded-full transition-colors z-50" 
-        aria-label="Toggle Menu"
+      <Button
+        id="menu-toggle"
+        variant="ghost"
+        size="icon"
+        class="md:hidden z-50"
+        ariaLabel="Открыть меню"
       >
         <Menu id="menu-icon" class="w-6 h-6" />
         <X id="close-icon" class="w-6 h-6 hidden" />
-      </button>
+      </Button>
     </div>
   </div>
 
@@ -70,7 +73,7 @@ const navLinks = [
       <p class="text-brand-text/40 text-sm mb-4 uppercase tracking-widest">Будем на связи</p>
       <div class="flex gap-4">
         <a href="#" class="text-brand-text/60 hover:text-brand-accent">Telegram</a>
-        <a href="#" class="text-brand-text/60 hover:text-brand-accent">WhatsApp</a>
+        <a href="#" class="text-brand-text/60 hover:text-brand-accent">ВКонтакте</a>
       </div>
     </div>
   </div>
@@ -90,16 +93,12 @@ const navLinks = [
     const header = document.querySelector('header');
     
     if (isOpen) {
-      // Close menu
       mobileMenu?.classList.replace('translate-x-0', 'translate-x-full');
       menuIcon?.classList.remove('hidden');
       closeIcon?.classList.add('hidden');
       body.style.overflow = '';
-      
-      // Restore header styling
       header?.classList.remove('bg-transparent', 'backdrop-blur-none');
       header?.classList.add('bg-brand-bg/80', 'backdrop-blur-md');
-      
       navLinks.forEach(link => {
         (link as HTMLElement).classList.remove('opacity-100', 'translate-y-0');
         (link as HTMLElement).classList.add('opacity-0', 'translate-y-4');
@@ -107,17 +106,12 @@ const navLinks = [
       menuFooter?.classList.remove('opacity-100', 'translate-y-0');
       menuFooter?.classList.add('opacity-0', 'translate-y-4');
     } else {
-      // Open menu
       mobileMenu?.classList.replace('translate-x-full', 'translate-x-0');
       menuIcon?.classList.add('hidden');
       closeIcon?.classList.remove('hidden');
       body.style.overflow = 'hidden';
-      
-      // Make header transparent and remove its blur to let menu blur shine through
       header?.classList.remove('bg-brand-bg/80', 'backdrop-blur-md');
       header?.classList.add('bg-transparent', 'backdrop-blur-none');
-      
-      // Animate items in
       setTimeout(() => {
         navLinks.forEach(link => {
           (link as HTMLElement).classList.remove('opacity-0', 'translate-y-4');
@@ -131,7 +125,6 @@ const navLinks = [
 
   menuToggle?.addEventListener('click', toggleMenu);
 
-  // Close menu on link click
   navLinks.forEach(link => {
     link.addEventListener('click', () => {
       if (mobileMenu?.classList.contains('translate-x-0')) {
@@ -146,17 +139,16 @@ const navLinks = [
     transition-timing-function: cubic-bezier(0.25, 0.1, 0.25, 1);
   }
 
-  /* Support for Safari and older browsers */
   #main-header, #mobile-menu {
     -webkit-backdrop-filter: blur(var(--blur-amount, 12px));
   }
 
   #main-header {
-    --blur-amount: 12px; /* backdrop-blur-md */
+    --blur-amount: 12px;
   }
 
   #mobile-menu {
-    --blur-amount: 40px; /* backdrop-blur-2xl */
+    --blur-amount: 40px;
   }
 
   .backdrop-blur-none {

@@ -3,7 +3,11 @@ import MainLayout from '../layouts/MainLayout.astro';
 import SiteHeader from '../components/SiteHeader.astro';
 import SiteFooter from '../components/SiteFooter.astro';
 import ContactButtons from '../components/ContactButtons.astro';
+import IconBox from '../components/ui/icon-box.astro';
 import { Mail, Phone, MapPin, Clock } from '@lucide/astro';
+
+const tgLink = import.meta.env.PUBLIC_TG_LINK || 'https://t.me/snakeforest';
+const waLink = import.meta.env.PUBLIC_WA_LINK || 'https://wa.me/79991234567';
 ---
 
 <MainLayout title="Контакты | Змеиный лес">
@@ -21,9 +25,9 @@ import { Mail, Phone, MapPin, Clock } from '@lucide/astro';
             <h2 class="text-brand-text/40 text-sm uppercase tracking-widest mb-6">Свяжитесь с нами</h2>
             <div class="space-y-6">
               <div class="flex items-center gap-6">
-                <div class="w-12 h-12 bg-brand-surface border border-brand-border rounded-xl flex items-center justify-center text-brand-accent">
+                <IconBox>
                   <Phone class="w-6 h-6" />
-                </div>
+                </IconBox>
                 <div>
                   <p class="text-brand-text/60 text-sm">Телефон</p>
                   <a href="tel:+79991234567" class="text-xl font-bold text-brand-text hover:text-brand-accent transition-colors">+7 (999) 123-45-67</a>
@@ -31,9 +35,9 @@ import { Mail, Phone, MapPin, Clock } from '@lucide/astro';
               </div>
               
               <div class="flex items-center gap-6">
-                <div class="w-12 h-12 bg-brand-surface border border-brand-border rounded-xl flex items-center justify-center text-brand-accent">
+                <IconBox>
                   <Mail class="w-6 h-6" />
-                </div>
+                </IconBox>
                 <div>
                   <p class="text-brand-text/60 text-sm">Email</p>
                   <a href="mailto:hello@snakeforest.ru" class="text-xl font-bold text-brand-text hover:text-brand-accent transition-colors">hello@snakeforest.ru</a>
@@ -46,9 +50,9 @@ import { Mail, Phone, MapPin, Clock } from '@lucide/astro';
             <h2 class="text-brand-text/40 text-sm uppercase tracking-widest mb-6">Наш адрес</h2>
             <div class="space-y-6">
               <div class="flex items-start gap-6">
-                <div class="w-12 h-12 bg-brand-surface border border-brand-border rounded-xl flex items-center justify-center text-brand-accent shrink-0">
+                <IconBox>
                   <MapPin class="w-6 h-6" />
-                </div>
+                </IconBox>
                 <div>
                   <p class="text-brand-text/60 text-sm">Местоположение</p>
                   <p class="text-xl font-bold text-brand-text">г. Москва, ул. Лесная, д. 43<br/>(по предварительной записи)</p>
@@ -56,9 +60,9 @@ import { Mail, Phone, MapPin, Clock } from '@lucide/astro';
               </div>
 
               <div class="flex items-start gap-6">
-                <div class="w-12 h-12 bg-brand-surface border border-brand-border rounded-xl flex items-center justify-center text-brand-accent shrink-0">
+                <IconBox>
                   <Clock class="w-6 h-6" />
-                </div>
+                </IconBox>
                 <div>
                   <p class="text-brand-text/60 text-sm">Часы работы</p>
                   <p class="text-xl font-bold text-brand-text">Ежедневно: 10:00 — 21:00</p>
@@ -81,11 +85,11 @@ import { Mail, Phone, MapPin, Clock } from '@lucide/astro';
               У вас есть вопросы о наличии животных или нужна помощь в выборе оборудования? Наши специалисты готовы проконсультировать вас в любое время.
             </p>
             <div class="space-y-4">
-              <a href="https://t.me/snakeforest" class="flex items-center justify-between p-6 bg-brand-text text-brand-bg rounded-2xl font-bold hover:scale-[1.02] transition-transform">
+              <a href={tgLink} class="flex items-center justify-between p-6 bg-brand-text text-brand-bg rounded-2xl font-bold hover:scale-[1.02] transition-transform">
                 Написать в Telegram
                 <span>→</span>
               </a>
-              <a href="https://wa.me/79991234567" class="flex items-center justify-between p-6 bg-brand-bg text-brand-text border border-brand-border rounded-2xl font-bold hover:bg-brand-surface transition-colors">
+              <a href={waLink} class="flex items-center justify-between p-6 bg-brand-bg text-brand-text border border-brand-border rounded-2xl font-bold hover:bg-brand-surface transition-colors">
                 Написать в WhatsApp
                 <span>→</span>
               </a>
