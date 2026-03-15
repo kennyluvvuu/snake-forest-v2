@@ -3,19 +3,19 @@ import type IImageController from "../interfaces/image.controller.interface";
 import type { SingleImageFilePart } from "../schemas/image.schema";
 import * as path from "path";
 import mime from "mime-types";
-import { createWriteStream } from "fs";
 import { rm, mkdir } from "fs/promises";
-import { pipeline } from "node:stream/promises";
 import { writeFile } from "node:fs/promises";
 
 export default class ImageController<
     T extends { images: string[] },
 > implements IImageController<T> {
     private refModel: mongoose.Model<T>;
-    private uploadDir: string;
-    constructor(refModel: mongoose.Model<T>, uploadDir: string) {
+    private uploadDir: string;  // filesystem path, e.g. "./uploads/animals"
+    private publicDir: string;  // public URL prefix, e.g. "/uploads/animals"
+    constructor(refModel: mongoose.Model<T>, uploadDir: string, publicDir: string) {
         this.refModel = refModel;
         this.uploadDir = uploadDir;
+        this.publicDir = publicDir;
     }
 
     async add(
@@ -26,17 +26,17 @@ export default class ImageController<
         if (!objectToUpdate) {
             return null;
         }
-        const uploadPath = path.join(this.uploadDir, refId, "images");
-        await mkdir(uploadPath, { recursive: true });
+        const fsPath = path.join(this.uploadDir, refId, "images");
+        await mkdir(fsPath, { recursive: true });
         for (const image of images) {
             const extension = `.${mime.extension(image.mimetype) || "jpeg"}`;
-            const imagePath = path.join(
-                uploadPath,
-                crypto.randomUUID().slice(0, 8) + extension,
-            );
+            const filename = crypto.randomUUID().slice(0, 8) + extension;
 
-            await writeFile(imagePath, image.buffer);
-            objectToUpdate.images.push(imagePath);
+            await writeFile(path.join(fsPath, filename), image.buffer);
+
+            // store public URL (served by nginx), not the filesystem path
+            const publicUrl = [this.publicDir, refId, "images", filename].join("/");
+            objectToUpdate.images.push(publicUrl);
         }
 
         await objectToUpdate.save();

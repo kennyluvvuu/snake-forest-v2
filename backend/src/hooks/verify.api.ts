@@ -5,7 +5,7 @@ export default async function verifyApiKey(
     reply: FastifyReply,
 ) {
     if (request.headers["x-api-key"] !== request.server.config.adminApiKey) {
-        reply.code(401).send({
+        return reply.code(401).send({
             statusCode: 401,
             error: "Unauthorized",
             message: "You dont have rights to do this",

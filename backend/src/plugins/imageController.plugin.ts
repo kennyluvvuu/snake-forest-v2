@@ -17,5 +17,6 @@ export default fp(
 declare module "fastify" {
   interface FastifyInstance {
     animalImageController: IImageController<any>;
+    productImageController: IImageController<any>;
   }
 }

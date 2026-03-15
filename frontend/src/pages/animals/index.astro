@@ -1,0 +1,83 @@
+---
+import MainLayout from '../../layouts/MainLayout.astro';
+import SiteHeader from '../../components/SiteHeader.astro';
+import SiteFooter from '../../components/SiteFooter.astro';
+import AnimalCard from '../../components/AnimalCard.astro';
+import { apiFetch, type Animal } from '@/lib/api.ts';
+
+let animals: Animal[] = [];
+let error = null;
+
+try {
+  animals = await apiFetch<Animal[]>('/animals/');
+} catch (e) {
+  console.error("Failed to fetch animals catalog:", e);
+  error = "Не удалось загрузить каталог животных";
+}
+
+const speciesOptions = [
+  { id: 'all', label: 'Все' },
+  { id: 'snake', label: 'Змеи' },
+  { id: 'lizard', label: 'Ящерицы' },
+  { id: 'turtle', label: 'Черепахи' },
+  { id: 'rodent', label: 'Грызуны' },
+  { id: 'other', label: 'Прочее' }
+];
+---
+
+<MainLayout title="Каталог животных | Змеиный лес">
+  <SiteHeader slot="header" />
+
+  <section class="pt-12 pb-20 px-4">
+    <div class="max-w-7xl mx-auto">
+      <div class="mb-12">
+        <h1 class="text-4xl md:text-5xl font-serif font-bold text-brand-text mb-8">Наши жители</h1>
+        
+        <!-- Tabs -->
+      <div class="overflow-x-auto">
+        <div class="flex gap-1 p-1 bg-brand-surface rounded-2xl border border-brand-border w-max" id="filter-container">
+          {speciesOptions.map(option => (
+            <button 
+              data-filter={option.id}
+              class={`px-6 py-2 rounded-xl text-sm font-bold transition-all ${option.id === 'all' ? 'bg-brand-bg text-brand-text shadow-sm' : 'text-brand-text/50 hover:text-brand-text'}`}
+            >
+              {option.label}
+            </button>
+          ))}
+        </div></div>
+      </div>
+
+      {error ? (
+        <div class="bg-brand-surface p-12 rounded-3xl border border-brand-border text-center">
+          <p class="text-brand-text/60 italic">{error}</p>
+        </div>
+      ) : (
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-8" id="animal-grid">
+          {animals.length > 0 ? (
+            animals.map(animal => (
+              <div class="filter-item" data-species={animal.species.toLowerCase()}>
+                <AnimalCard animal={animal} />
+              </div>
+            ))
+          ) : (
+            <p class="col-span-full text-center text-brand-text/40 py-20">В данный момент каталог пуст</p>
+          )}
+        </div>
+      )}
+    </div>
+  </section>
+
+  <SiteFooter slot="footer" />
+
+  <script>
+    import { initFilter } from '@/scripts/filter.ts';
+
+    initFilter({
+      filterContainerSelector: '#filter-container',
+      itemSelector: '.filter-item',
+      itemDataKey: 'species',
+      activeClasses: ['bg-brand-bg', 'text-brand-text', 'shadow-sm'],
+      inactiveClasses: ['text-brand-text/50'],
+    });
+  </script>
+</MainLayout>

@@ -1,0 +1,176 @@
+---
+import MainLayout from '../../layouts/MainLayout.astro';
+import SiteHeader from '../../components/SiteHeader.astro';
+import SiteFooter from '../../components/SiteFooter.astro';
+import { apiFetch, type Product } from '../../lib/api';
+import { ChevronLeft, ChevronRight, Info, Package } from '@lucide/astro';
+
+const { id } = Astro.params;
+
+let product: Product | null = null;
+let error = null;
+
+try {
+  product = await apiFetch<Product>(`/products/${id}`);
+} catch (e) {
+  console.error(`Failed to fetch product ${id}:`, e);
+  error = (e as Error).message === 'Not Found' ? 'Товар не найден' : 'Ошибка загрузки данных';
+}
+
+if (!product && !error) {
+  return Astro.redirect('/404');
+}
+
+const typeLabels: Record<string, string> = {
+  toy: 'Игрушка',
+  usable: 'Оборудование',
+  food: 'Корм'
+};
+
+const images = product?.imagesUrl || (product?.preview ? [product.preview[0]] : []);
+---
+
+<MainLayout title={product ? `${product.name} | Змеиный лес` : 'Загрузка...'}>
+  <SiteHeader slot="header" />
+
+  <section class="max-w-7xl mx-auto px-4 py-8 md:py-16">
+    {error ? (
+      <div class="text-center py-20">
+        <h1 class="text-3xl font-serif font-bold text-brand-text mb-4">{error}</h1>
+        <a href="/shop" class="text-brand-accent hover:underline">Вернуться в магазин</a>
+      </div>
+    ) : product && (
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+        
+        <!-- Gallery Section -->
+        <div class="space-y-4">
+          <div class="relative aspect-square rounded-[2rem] overflow-hidden border border-brand-border bg-brand-surface group" id="main-image-container">
+            <img 
+              id="main-image"
+              src={images[0]} 
+              alt={product.name}
+              class="w-full h-full object-cover"
+            />
+            {images.length > 1 && (
+              <div class="absolute inset-x-4 top-1/2 -translate-y-1/2 flex justify-between pointer-events-none">
+                <button id="prev-btn" class="p-3 rounded-full bg-brand-bg/80 backdrop-blur-md shadow-lg pointer-events-auto opacity-0 group-hover:opacity-100 transition-opacity">
+                  <ChevronLeft class="w-6 h-6 text-brand-text" />
+                </button>
+                <button id="next-btn" class="p-3 rounded-full bg-brand-bg/80 backdrop-blur-md shadow-lg pointer-events-auto opacity-0 group-hover:opacity-100 transition-opacity">
+                  <ChevronRight class="w-6 h-6 text-brand-text" />
+                </button>
+              </div>
+            )}
+          </div>
+          
+          {images.length > 1 && (
+            <div class="flex gap-4 overflow-x-auto pb-2" id="thumbnail-container">
+              {images.map((img, idx) => (
+                <button 
+                  class={`relative w-24 aspect-square rounded-xl overflow-hidden border-2 transition-all flex-shrink-0 thumbnail ${idx === 0 ? 'border-brand-accent scale-95' : 'border-transparent'}`}
+                  data-index={idx}
+                  data-src={img}
+                >
+                  <img src={img} alt="" class="w-full h-full object-cover" />
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <!-- Info Section -->
+        <div class="space-y-8">
+          <div>
+            <div class="flex flex-wrap gap-2 mb-4">
+              <span class="px-3 py-1 bg-brand-accent/20 text-brand-text text-xs font-bold uppercase tracking-wider rounded-lg border border-brand-accent/30">
+                {typeLabels[product.type]}
+              </span>
+            </div>
+            <h1 class="text-4xl md:text-5xl font-serif font-bold text-brand-text leading-tight mb-4">
+              {product.name}
+            </h1>
+            <div class="text-4xl font-bold text-brand-accent">
+              {product.price.toLocaleString('ru-RU')} ₽
+            </div>
+          </div>
+
+          <div class="space-y-4">
+            <h3 class="text-xl font-serif font-bold text-brand-text border-b border-brand-border pb-2 flex items-center gap-2">
+              <Info class="w-5 h-5 text-brand-accent" />
+              Описание
+            </h3>
+            <div class="text-brand-text/70 leading-relaxed text-lg prose">
+              {product.description || "Описание скоро появится..."}
+            </div>
+          </div>
+
+          <div class="pt-8 space-y-4">
+            <h3 class="text-lg font-bold text-brand-text uppercase tracking-wider">Заинтересованы в покупке?</h3>
+            <div class="flex flex-col gap-3">
+              <a 
+                href={import.meta.env.PUBLIC_TG_LINK} 
+                class="flex items-center justify-center gap-3 w-full py-4 bg-brand-text text-brand-bg rounded-2xl font-bold text-lg transition-transform hover:scale-[1.02] active:scale-95 shadow-xl"
+              >
+                Узнать подробнее в Telegram
+              </a>
+              <a 
+                href={import.meta.env.PUBLIC_VK_LINK} 
+                class="flex items-center justify-center gap-3 w-full py-4 bg-brand-surface text-brand-text border border-brand-border rounded-2xl font-bold text-lg transition-all hover:bg-brand-border/10"
+              >
+                Написать в ВКонтакте
+              </a>
+            </div>
+            <p class="text-center text-brand-text/40 text-sm italic">
+              * Мы не осуществляем продажи напрямую через сайт. Свяжитесь с нами для уточнения деталей.
+            </p>
+          </div>
+        </div>
+      </div>
+    )}
+  </section>
+
+  <SiteFooter slot="footer" />
+
+  <script define:vars={{ images }}>
+    const mainImage = document.getElementById('main-image');
+    const prevBtn = document.getElementById('prev-btn');
+    const nextBtn = document.getElementById('next-btn');
+    const thumbnails = document.querySelectorAll('.thumbnail');
+    
+    let currentIndex = 0;
+
+    const updateImage = (index) => {
+      currentIndex = index;
+      if (mainImage) mainImage.src = images[currentIndex];
+      
+      // Update thumbnails UI
+      thumbnails.forEach((thumb, i) => {
+        if (i === currentIndex) {
+          thumb.classList.add('border-brand-accent', 'scale-95');
+          thumb.classList.remove('border-transparent');
+        } else {
+          thumb.classList.remove('border-brand-accent', 'scale-95');
+          thumb.classList.add('border-transparent');
+        }
+      });
+    };
+
+    if (prevBtn) {
+      prevBtn.addEventListener('click', () => {
+        const nextIdx = (currentIndex - 1 + images.length) % images.length;
+        updateImage(nextIdx);
+      });
+    }
+
+    if (nextBtn) {
+      nextBtn.addEventListener('click', () => {
+        const nextIdx = (currentIndex + 1) % images.length;
+        updateImage(nextIdx);
+      });
+    }
+
+    thumbnails.forEach((thumb, i) => {
+      thumb.addEventListener('click', () => updateImage(i));
+    });
+  </script>
+</MainLayout>

@@ -1,0 +1,66 @@
+---
+import MainLayout from '../layouts/MainLayout.astro';
+import SiteHeader from '../components/SiteHeader.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+---
+
+<MainLayout title="О нас | Змеиный лес">
+  <SiteHeader slot="header" />
+  
+  <main class="pt-32 pb-20 px-4">
+    <div class="max-w-4xl mx-auto">
+      <h1 class="text-5xl md:text-7xl font-serif font-bold text-brand-text mb-8 tracking-tight">
+        О нас
+      </h1>
+      
+      <div class="prose prose-invert prose-lg max-w-none text-brand-text/80 leading-relaxed">
+        <p class="text-2xl font-medium text-brand-text mb-12">
+          «Змеиный лес» — это не просто магазин, это сообщество людей, влюбленных в экзотическую природу и стремящихся создать идеальные условия для жизни удивительных существ.
+        </p>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-12 mb-16">
+          <div class="space-y-4">
+            <h2 class="text-2xl font-serif font-bold text-brand-accent">Наша миссия</h2>
+            <p>
+              Мы стремимся популяризировать ответственное содержание экзотических животных. Наша цель — предоставить не только самых здоровых и красивых питомцев, но и все необходимые знания и оборудование для их долгой и счастливой жизни.
+            </p>
+          </div>
+          <div class="space-y-4">
+            <h2 class="text-2xl font-serif font-bold text-brand-accent">Наш опыт</h2>
+            <p>
+              За годы работы мы накопили колоссальный опыт в разведении и содержании рептилий, амфибий и других экзотических видов. Каждый житель нашего «леса» получает индивидуальный уход и профессиональное ветеринарное сопровождение.
+            </p>
+          </div>
+        </div>
+
+        <section class="bg-brand-surface border border-brand-border rounded-[2rem] p-8 md:p-12 mb-16">
+          <h2 class="text-3xl font-serif font-bold text-brand-text mb-6">Почему выбирают нас?</h2>
+          <ul class="grid grid-cols-1 md:grid-cols-2 gap-6 list-none p-0">
+            <li class="flex items-start gap-4">
+              <span class="bg-brand-accent/20 text-brand-accent p-2 rounded-lg font-bold">01</span>
+              <span>Только здоровые животные собственного разведения или от проверенных заводчиков.</span>
+            </li>
+            <li class="flex items-start gap-4">
+              <span class="bg-brand-accent/20 text-brand-accent p-2 rounded-lg font-bold">02</span>
+              <span>Профессиональные консультации по содержанию и кормлению.</span>
+            </li>
+            <li class="flex items-start gap-4">
+              <span class="bg-brand-accent/20 text-brand-accent p-2 rounded-lg font-bold">03</span>
+              <span>Широкий ассортимент оборудования: от стартовых наборов до элитных террариумов.</span>
+            </li>
+            <li class="flex items-start gap-4">
+              <span class="bg-brand-accent/20 text-brand-accent p-2 rounded-lg font-bold">04</span>
+              <span>Собственное производство уникального 3D-декора.</span>
+            </li>
+          </ul>
+        </section>
+
+        <p>
+          Мы приглашаем вас окунуться в удивительный мир экзотики вместе с нами. «Змеиный лес» — это место, где природа становится ближе.
+        </p>
+      </div>
+    </div>
+  </main>
+
+  <SiteFooter slot="footer" />
+</MainLayout>

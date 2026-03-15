@@ -1,0 +1,55 @@
+---
+import type { Animal } from '@/lib/api.ts';
+import Badge from './ui/badge.astro';
+import { ArrowRight } from '@lucide/astro';
+
+interface Props {
+  animal: Animal;
+  loading?: 'lazy' | 'eager';
+}
+
+const { animal, loading = 'lazy' } = Astro.props;
+
+const imageUrl = animal.preview?.[0] || (animal as any).imagesUrl?.[0] || 'https://placehold.co/600x400?text=Animal';
+
+const ageLabels: Record<string, string> = {
+  young: 'Малыш',
+  adult: 'Взрослый',
+  elderly: 'Пожилой'
+};
+---
+
+<a href={`/animals/${animal.id}`} class="group block bg-brand-surface rounded-2xl overflow-hidden border border-brand-border transition-all hover:shadow-xl hover:-translate-y-1">
+  <div class="aspect-[4/3] sm:aspect-square md:aspect-[4/3] overflow-hidden bg-brand-bg relative">
+    <img 
+      src={imageUrl} 
+      alt={animal.commonName}
+      loading={loading}
+      class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+    />
+    <div class="absolute top-4 left-4">
+      <Badge>{ageLabels[animal.age]}</Badge>
+    </div>
+  </div>
+  
+  <div class="p-6 sm:p-5 md:p-6 space-y-3">
+    <div>
+      <h3 class="text-2xl sm:text-xl md:text-2xl font-serif font-bold text-brand-text group-hover:text-brand-accent transition-colors leading-tight">
+        {animal.commonName}
+      </h3>
+      <p class="text-brand-text/50 text-xs sm:text-[10px] md:text-sm font-bold uppercase tracking-[0.1em] mt-1">
+        {animal.morph}
+      </p>
+    </div>
+    
+    <div class="flex items-center justify-between pt-4 border-t border-brand-border/30">
+      <span class="text-xl sm:text-lg md:text-xl font-black text-brand-text">
+        {animal.price.toLocaleString('ru-RU')} <span class="text-sm font-normal opacity-70">₽</span>
+      </span>
+      <span class="text-sm font-bold text-brand-accent/80 group-hover:text-brand-accent transition-all flex items-center gap-1">
+        Смотреть
+        <ArrowRight class="w-4 h-4 transition-transform group-hover:translate-x-1" />
+      </span>
+    </div>
+  </div>
+</a>
