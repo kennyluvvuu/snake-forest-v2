@@ -8,8 +8,8 @@ async def get_products(client: httpx.AsyncClient) -> list[dict]:
     return await handle_response(response)
 
 
-async def get_product(client: httpx.AsyncClient, product_id: str) -> dict:
-    response = await client.get(f"/products/{product_id}")
+async def get_product(client: httpx.AsyncClient, slug: str) -> dict:
+    response = await client.get(f"/products/{slug}")
     return await handle_response(response)
 
 

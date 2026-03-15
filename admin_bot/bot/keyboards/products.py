@@ -14,7 +14,7 @@ def product_list_keyboard(products: list[dict]) -> InlineKeyboardMarkup:
     for product in products:
         type_label = PRODUCT_TYPE_LABELS.get(product.get("type", ""), product.get("type", ""))
         label = f"{type_label} {product['name']} — {product['price']} ₽"
-        builder.button(text=label, callback_data=f"product:view:{product['id']}")
+        builder.button(text=label, callback_data=f"product:view:{product['slug']}")
     builder.adjust(1)
     return builder.as_markup()
 
