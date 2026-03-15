@@ -8,10 +8,19 @@ import {
 } from "../schemas/product.schema";
 import type IProductController from "../interfaces/product.controller.interface";
 import { Product } from "../models/product.model";
+import slugify from "slugify";
 
 export default class ProductController implements IProductController {
     async create(req: CreateProductReq): Promise<CreateProductRes> {
+        let baseSlug = slugify(req.name);
+        let slug = baseSlug;
+        let counter = 1;
+        while (await Product.findOne({ slug })) {
+            slug = baseSlug + "-" + counter;
+            counter++;
+        }
         const newProduct = new Product({
+            slug: slug,
             name: req.name,
             price: req.price,
             type: req.type,
@@ -22,6 +31,7 @@ export default class ProductController implements IProductController {
 
         return {
             id: savedProduct.id,
+            slug: savedProduct.slug,
             name: savedProduct.name,
             price: savedProduct.price,
             type: savedProduct.type as "toy" | "usable" | "food",
@@ -39,6 +49,25 @@ export default class ProductController implements IProductController {
 
         return {
             id: product.id,
+            slug: product.slug,
+            name: product.name,
+            price: product.price,
+            type: product.type as "toy" | "usable" | "food",
+            description: product.description,
+            imagesUrl: product.images,
+        };
+    }
+
+    async getBySlug(slug: string): Promise<GetProductRes | null> {
+        const product = await Product.findOne({ slug });
+
+        if (!product) {
+            return null;
+        }
+
+        return {
+            id: product.id,
+            slug: product.slug,
             name: product.name,
             price: product.price,
             type: product.type as "toy" | "usable" | "food",
@@ -59,6 +88,7 @@ export default class ProductController implements IProductController {
 
         return productPreviews.map((product) => ({
             id: product.id,
+            slug: product.slug,
             name: product.name,
             price: product.price,
             type: product.type as "toy" | "usable" | "food",
@@ -90,6 +120,7 @@ export default class ProductController implements IProductController {
 
         return {
             id: updatedProduct.id,
+            slug: updatedProduct.slug,
             name: updatedProduct.name,
             price: updatedProduct.price,
             type: updatedProduct.type as "toy" | "usable" | "food",

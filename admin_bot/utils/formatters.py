@@ -27,6 +27,11 @@ def format_animal_card(animal: dict, full: bool = False) -> str:
         images = animal.get("imagesUrl", [])
         if images:
             lines += ["", f"🖼 Фото: {len(images)} шт."]
+        
+        slug = animal.get("slug")
+        if slug:
+            lines += ["", f"🔗 <a href='https://snake-forest.ru/animals/{slug}'>Смотреть на сайте</a>"]
+        
         lines += ["", f"🆔 ID: <code>{animal.get('id', '—')}</code>"]
 
     return "\n".join(lines)
@@ -62,6 +67,11 @@ def format_product_card(product: dict, full: bool = False) -> str:
         images = product.get("imagesUrl", [])
         if images:
             lines += ["", f"🖼 Фото: {len(images)} шт."]
+        
+        slug = product.get("slug")
+        if slug:
+            lines += ["", f"🔗 <a href='https://snake-forest.ru/shop/{slug}'>Смотреть на сайте</a>"]
+
         lines += ["", f"🆔 ID: <code>{product.get('id', '—')}</code>"]
 
     return "\n".join(lines)

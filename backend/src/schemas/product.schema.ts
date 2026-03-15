@@ -2,6 +2,7 @@ import { z } from "zod";
 
 export const ProductSchema = z.object({
     id: z.string(),
+    slug: z.string(),
     name: z.string().min(1, { message: "Name is required." }),
     price: z.number().min(0, { message: "Price must be >= 0." }),
     type: z.enum(["toy", "usable", "food"]),
@@ -17,6 +18,7 @@ export const ProductSchema = z.object({
 export const CreateProductSchema = ProductSchema.omit({
     id: true,
     imagesUrl: true,
+    slug: true,
 });
 
 export type CreateProductReq = z.infer<typeof CreateProductSchema>;
@@ -25,6 +27,7 @@ export type CreateProductRes = z.infer<typeof ProductSchema>;
 export const UpdateProductSchema = ProductSchema.omit({
     id: true,
     imagesUrl: true,
+    slug: true,
 });
 
 export type UpdateProductReq = z.infer<typeof UpdateProductSchema>;
@@ -44,4 +47,8 @@ export const UrlParamsIdSchema = z.object({
     id: z.string().refine((id) => /^[a-fA-F0-9]{24}$/.test(id), {
         message: "Invalid product id format.",
     }),
+});
+
+export const UrlParamsSlugSchema = z.object({
+    slug: z.string().min(1, { message: "Slug is required." }),
 });

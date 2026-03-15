@@ -8,8 +8,8 @@ async def get_animals(client: httpx.AsyncClient) -> list[dict]:
     return await handle_response(response)
 
 
-async def get_animal(client: httpx.AsyncClient, animal_id: str) -> dict:
-    response = await client.get(f"/animals/{animal_id}")
+async def get_animal(client: httpx.AsyncClient, slug: str) -> dict:
+    response = await client.get(f"/animals/{slug}")
     return await handle_response(response)
 
 

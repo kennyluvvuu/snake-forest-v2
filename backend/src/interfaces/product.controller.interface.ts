@@ -10,6 +10,7 @@ import type {
 export default interface IProductController {
     create: (req: CreateProductReq) => Promise<CreateProductRes>;
     get: (id: string) => Promise<GetProductRes | null>;
+    getBySlug: (slug: string) => Promise<GetProductRes | null>;
     getPreviews: () => Promise<Array<GetProductPreviewRes> | null>;
     update: (
         id: string,

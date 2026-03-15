@@ -7,7 +7,7 @@ def animal_list_keyboard(animals: list[dict]) -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
     for animal in animals:
         label = f"🐍 {animal['commonName']} — {animal['morph']} | {animal['price']} ₽"
-        builder.button(text=label, callback_data=f"animal:view:{animal['id']}")
+        builder.button(text=label, callback_data=f"animal:view:{animal['slug']}")
     builder.adjust(1)
     return builder.as_markup()
 

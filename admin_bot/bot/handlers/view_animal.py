@@ -12,16 +12,15 @@ router = Router(name="view_animal")
 
 @router.callback_query(F.data.startswith("animal:view:"))
 async def cb_view_animal(callback: CallbackQuery, api_client: httpx.AsyncClient) -> None:
-    animal_id = callback.data.split(":", 2)[2]
-
+    slug = callback.data.split(":", 2)[2]
     try:
-        animal = await get_animal(api_client, animal_id)
+        animal = await get_animal(api_client, slug)
     except APIError as e:
         await callback.answer(f"❌ {e.message}", show_alert=True)
         return
 
     text = format_animal_card(animal, full=True)
-    keyboard = animal_actions_keyboard(animal_id)
+    keyboard = animal_actions_keyboard(animal["id"])
 
     # If the message has photos, we need to send a new message (can't edit caption to text easily)
     try:

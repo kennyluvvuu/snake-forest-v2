@@ -47,10 +47,10 @@ const animalRoutes: FastifyPluginAsyncZod = async (fastify, options) => {
     );
 
     fastify.get(
-        "/:id",
+        "/:slug",
         {
             schema: {
-                params: schemas.UrlParamsIdSchema,
+                params: schemas.UrlParamsSlugSchema,
                 response: {
                     200: schemas.AnimalSchema,
                     404: errorSchemas.NotFoundErrorSchema,
@@ -60,7 +60,7 @@ const animalRoutes: FastifyPluginAsyncZod = async (fastify, options) => {
         },
         async (request, reply) => {
             try {
-                let animal = await animalController.get(request.params.id);
+                let animal = await animalController.getBySlug(request.params.slug);
                 if (!animal) {
                     return reply.code(404).send({
                         statusCode: 404,
