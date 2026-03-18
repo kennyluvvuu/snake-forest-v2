@@ -3,8 +3,16 @@ import tailwindcss from "@tailwindcss/vite";
 
 // https://astro.build/config
 export default defineConfig({
-    output: "static",
-    vite: {
-        plugins: [tailwindcss()],
+  output: "static",
+  vite: {
+    plugins: [tailwindcss()],
+    server: {
+      proxy: {
+        "/uploads": {
+          target: "http://localhost/uploads",
+          changeOrigin: true,
+        },
+      },
     },
+  },
 });

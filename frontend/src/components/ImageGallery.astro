@@ -1,0 +1,47 @@
+---
+import { ChevronLeft, ChevronRight } from '@lucide/astro';
+
+interface Props {
+  images: string[];
+  name: string;
+}
+
+const { images, name } = Astro.props;
+---
+
+<div class="space-y-4" data-gallery>
+  <div class="relative aspect-square rounded-4xl overflow-hidden border border-brand-border bg-brand-surface group" id="main-image-container">
+    <img
+      id="main-image"
+      src={images[0]}
+      alt={name}
+      class="w-full h-full object-cover"
+    />
+    {images.length > 1 && (
+      <div class="absolute inset-x-4 top-1/2 -translate-y-1/2 flex justify-between pointer-events-none">
+        <button id="prev-btn" class="p-3 rounded-full bg-brand-bg/80 backdrop-blur-md shadow-lg pointer-events-auto opacity-0 group-hover:opacity-100 transition-opacity" aria-label="Previous image">
+          <ChevronLeft class="w-6 h-6 text-brand-text" />
+        </button>
+        <button id="next-btn" class="p-3 rounded-full bg-brand-bg/80 backdrop-blur-md shadow-lg pointer-events-auto opacity-0 group-hover:opacity-100 transition-opacity" aria-label="Next image">
+          <ChevronRight class="w-6 h-6 text-brand-text" />
+        </button>
+      </div>
+    )}
+  </div>
+
+  {images.length > 1 && (
+    <div class="flex gap-4 overflow-x-auto pb-2" id="thumbnail-container">
+      {images.map((img, idx) => (
+        <button
+          class={`relative w-24 aspect-square rounded-xl overflow-hidden border-2 transition-all shrink-0 thumbnail ${idx === 0 ? 'border-brand-accent scale-95' : 'border-transparent'}`}
+          data-index={idx}
+          data-src={img}
+        >
+          <img src={img} alt="" class="w-full h-full object-cover" />
+        </button>
+      ))}
+    </div>
+  )}
+</div>
+
+<script src="../scripts/gallery.ts"></script>
