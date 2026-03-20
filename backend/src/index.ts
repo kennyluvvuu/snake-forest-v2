@@ -1,4 +1,5 @@
 import Fasify from "fastify";
+import fastifyHelmet from "@fastify/helmet";
 import animalControllerPlugin from "./plugins/animalController.plugin";
 import animalRoutes from "./plugins/animal.plugin";
 import { getConfig } from "./config/configGetter";
@@ -35,6 +36,9 @@ app.setSerializerCompiler(serializerCompiler);
 
 async function bootstrapServer() {
     try {
+        await app.register(fastifyHelmet, {
+            global: true,
+        });
         await app.register(configPlugin);
         app.log.info(app.config);
         await connectDb(app.config.db);
