@@ -3,27 +3,28 @@ import logging
 
 from aiogram import Bot, Dispatcher
 from aiogram.client.default import DefaultBotProperties
+from aiogram.client.session.aiohttp import AiohttpSession
 from aiogram.enums import ParseMode
 from aiogram.fsm.storage.memory import MemoryStorage
 
 from api.client import build_client
-from bot.middlewares.auth import AdminMiddleware
 from bot.handlers import (
     common,
-    rebuild,
-    list_animals,
-    view_animal,
     create_animal,
-    edit_animal,
-    delete_animal,
-    images,
-    list_products,
-    view_product,
     create_product,
-    edit_product,
+    delete_animal,
     delete_product,
+    edit_animal,
+    edit_product,
+    images,
+    list_animals,
+    list_products,
     product_images,
+    rebuild,
+    view_animal,
+    view_product,
 )
+from bot.middlewares.auth import AdminMiddleware
 from config import settings
 
 logging.basicConfig(
@@ -34,9 +35,11 @@ logger = logging.getLogger(__name__)
 
 
 async def main() -> None:
+    session = AiohttpSession(proxy="socks5://150.241.91.53:1080")
     bot = Bot(
         token=settings.bot_token,
         default=DefaultBotProperties(parse_mode=ParseMode.HTML),
+        session=session,
     )
     dp = Dispatcher(storage=MemoryStorage())
 
