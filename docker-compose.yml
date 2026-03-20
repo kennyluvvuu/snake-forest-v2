@@ -1,76 +1,74 @@
 services:
-    backend:
-        build: backend
-        container_name: backend-bun
-        # ports:
-        # - "8080:8080"
-        depends_on:
-            - db
-        env_file:
-            - .env
-        volumes:
-            - ./backend:/app
-            - uploads_data:/app/uploads
+  backend:
+    build: backend
+    container_name: backend-bun
+    # ports:
+    # - "8080:8080"
+    depends_on:
+      - db
+    env_file:
+      - .env
+    volumes:
+      - ./backend:/app
+      - uploads_data:/app/uploads
 
-    caddy:
-        image: caddy:latest
-        container_name: caddy-proxy
-        restart: unless-stopped
-        ports:
-            - "80:80"
-            - "443:443"
-        volumes:
-            - ./Caddyfile:/etc/caddy/Caddyfile
-            - uploads_data:/var/www/uploads:ro
-            - dist_data:/var/www/dist:ro
-            - caddy_data:/data
-            - caddy_config:/config
-        depends_on:
-            - backend
+  caddy:
+    image: caddy:latest
+    container_name: caddy-proxy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - uploads_data:/var/www/uploads:ro
+      - dist_data:/var/www/dist:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - backend
 
-    db:
-        image: mongo:latest
-        container_name: mongo-db
-        ports:
-            - "27017:27017"
-        env_file:
-            - .env
-        environment:
-            - MONGO_INITDB_ROOT_USERNAME=${MONGODB_USER}
-            - MONGO_INITDB_ROOT_PASSWORD=${MONGODB_PASSWD}
-            - MONGO_INITDB_DATABASE=${MONGODB_DB}
-        volumes:
-            - ./mongo-data:/data/db
+  db:
+    image: mongo:latest
+    container_name: mongo-db
+    env_file:
+      - .env
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGODB_USER}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGODB_PASSWD}
+      - MONGO_INITDB_DATABASE=${MONGODB_DB}
+    volumes:
+      - ./mongo-data:/data/db
 
-    bot:
-        build: admin_bot
-        container_name: admin_bot
-        env_file:
-            - .env
-        depends_on:
-            - backend
-            - caddy
-            - rebuilder
-        extra_hosts:
-            - "host.docker.internal:host-gateway"
+  bot:
+    build: admin_bot
+    container_name: admin_bot
+    env_file:
+      - .env
+    depends_on:
+      - backend
+      - caddy
+      - rebuilder
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
-    rebuilder:
-        build: rebuilder
-        container_name: rebuilder
-        env_file:
-            - .env
-        environment:
-            - FRONTEND_DIR=/app/frontend
-            - PUBLIC_API_BASE_URL=http://backend-bun:8080
-        depends_on:
-            - backend
-        volumes:
-            - ./frontend:/app/frontend
-            - /app/frontend/node_modules
-            - dist_data:/app/frontend/dist
+  rebuilder:
+    build: rebuilder
+    container_name: rebuilder
+    env_file:
+      - .env
+    environment:
+      - FRONTEND_DIR=/app/frontend
+      - PUBLIC_API_BASE_URL=http://backend-bun:8080
+    depends_on:
+      - backend
+    volumes:
+      - ./frontend:/app/frontend
+      - /app/frontend/node_modules
+      - dist_data:/app/frontend/dist
 
 volumes:
-    uploads_data:
-    dist_data:
-    caddy_data:
-    caddy_config:
+  uploads_data:
+  dist_data:
+  caddy_data:
+  caddy_config:
