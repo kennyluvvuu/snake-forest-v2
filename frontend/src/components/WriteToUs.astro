@@ -1,6 +1,6 @@
 ---
 const tgLink = import.meta.env.PUBLIC_TG_LINK || 'https://t.me/snakeforest';
-const waLink = import.meta.env.PUBLIC_WA_LINK || 'https://wa.me/79991234567';
+const vkLink = import.meta.env.PUBLIC_VK_LINK || 'https://vk.com/snakeforest';
 
 interface Props {
   className?: string;
@@ -21,8 +21,8 @@ const { className = "" } = Astro.props;
         Написать в Telegram
         <span>→</span>
       </a>
-      <a href={waLink} target="_blank" rel="noopener noreferrer" class="flex items-center justify-between p-6 bg-brand-bg text-brand-text border border-brand-border rounded-2xl font-bold hover:bg-brand-surface transition-colors">
-        Написать в WhatsApp
+      <a href={vkLink} target="_blank" rel="noopener noreferrer" class="flex items-center justify-between p-6 bg-brand-bg text-brand-text border border-brand-border rounded-2xl font-bold hover:bg-brand-surface transition-colors">
+        Написать ВКонтакте
         <span>→</span>
       </a>
     </div>
