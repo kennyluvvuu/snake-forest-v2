@@ -21,11 +21,18 @@ def build_client() -> httpx.AsyncClient:
 
 
 async def handle_response(response: httpx.Response) -> dict | list:
-    if response.status_code in (200, 201):
-        return response.json()
     try:
-        error_data = response.json()
-        message = error_data.get("message", "Unknown error")
+        data = response.json()
     except Exception:
-        message = response.text or "Unknown error"
+        data = None
+
+    if response.status_code in (200, 201):
+        return data if data is not None else {}
+
+    message = "Unknown error"
+    if isinstance(data, dict):
+        message = data.get("message", "Unknown error")
+    elif response.text:
+        message = response.text
+
     raise APIError(status_code=response.status_code, message=message)

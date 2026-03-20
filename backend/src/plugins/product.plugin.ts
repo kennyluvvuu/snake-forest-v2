@@ -188,7 +188,7 @@ const productRoutes: FastifyPluginAsyncZod = async (fastify, options) => {
                     });
                 }
 
-                reply.code(200);
+                reply.code(200).send({});
             } catch (e) {
                 reply.code(500).send({
                     statusCode: 500,
