@@ -21,6 +21,7 @@ import ProductController from "./controllers/product.controller";
 import productControllerPlugin from "./plugins/productController.plugin";
 import { Product } from "./models/product.model";
 import productRoutes from "./plugins/product.plugin";
+import metricsRoutes from "./plugins/metrics.plugin";
 
 console.log("hello lox");
 
@@ -78,6 +79,8 @@ async function bootstrapServer() {
         });
 
         await app.register(productRoutes, { prefix: "/products" });
+
+        await app.register(metricsRoutes);
 
         await app.listen({
             port: 8080,
