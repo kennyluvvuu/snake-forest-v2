@@ -6,7 +6,7 @@ from aiogram.filters import StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, Message
 
-from api.animals import upload_images, replace_images
+from api.animals import upload_images, replace_images, get_animal
 from api.client import APIError
 from bot.keyboards.animals import animal_actions_keyboard, cancel_keyboard
 from bot.states.animal import ImagesSG
@@ -18,23 +18,38 @@ MODE_REPLACE = "replace"
 
 # ── Entry points ───────────────────────────────────────────────────────────────
 
+
 @router.callback_query(F.data.startswith("animal:img_add:"))
-async def cb_img_add(callback: CallbackQuery, state: FSMContext) -> None:
-    animal_id = callback.data.split(":", 2)[2]
-    await _start_upload(callback, state, animal_id, MODE_ADD)
+async def cb_img_add(
+    callback: CallbackQuery, state: FSMContext, api_client: httpx.AsyncClient
+) -> None:
+    slug = callback.data.split(":", 2)[2]
+    try:
+        animal = await get_animal(api_client, slug)
+    except APIError as e:
+        await callback.answer(f"❌ {e.message}", show_alert=True)
+        return
+    await _start_upload(callback, state, animal["id"], slug, MODE_ADD)
 
 
 @router.callback_query(F.data.startswith("animal:img_replace:"))
-async def cb_img_replace(callback: CallbackQuery, state: FSMContext) -> None:
-    animal_id = callback.data.split(":", 2)[2]
-    await _start_upload(callback, state, animal_id, MODE_REPLACE)
+async def cb_img_replace(
+    callback: CallbackQuery, state: FSMContext, api_client: httpx.AsyncClient
+) -> None:
+    slug = callback.data.split(":", 2)[2]
+    try:
+        animal = await get_animal(api_client, slug)
+    except APIError as e:
+        await callback.answer(f"❌ {e.message}", show_alert=True)
+        return
+    await _start_upload(callback, state, animal["id"], slug, MODE_REPLACE)
 
 
 async def _start_upload(
-    callback: CallbackQuery, state: FSMContext, animal_id: str, mode: str
+    callback: CallbackQuery, state: FSMContext, animal_id: str, slug: str, mode: str
 ) -> None:
     await state.set_state(ImagesSG.waiting_photos)
-    await state.update_data(animal_id=animal_id, mode=mode, photos=[])
+    await state.update_data(animal_id=animal_id, animal_slug=slug, mode=mode, photos=[])
 
     verb = "добавлены к существующим" if mode == MODE_ADD else "заменят все текущие"
     await callback.message.edit_text(
@@ -47,7 +62,9 @@ async def _start_upload(
     )
     await callback.answer()
 
+
 # ── Collect photos ─────────────────────────────────────────────────────────────
+
 
 @router.message(ImagesSG.waiting_photos, F.photo)
 async def collect_photo(message: Message, state: FSMContext) -> None:
@@ -55,7 +72,9 @@ async def collect_photo(message: Message, state: FSMContext) -> None:
     photos: list = data.get("photos", [])
 
     if len(photos) >= 10:
-        await message.answer("⚠️ Максимум 10 фотографий. Нажмите ✅ Готово для загрузки.")
+        await message.answer(
+            "⚠️ Максимум 10 фотографий. Нажмите ✅ Готово для загрузки."
+        )
         return
 
     # Take the highest resolution version
@@ -67,7 +86,9 @@ async def collect_photo(message: Message, state: FSMContext) -> None:
         reply_markup=_done_cancel_keyboard(),
     )
 
+
 # ── Submit ─────────────────────────────────────────────────────────────────────
+
 
 @router.callback_query(ImagesSG.waiting_photos, F.data == "images:done")
 async def cb_images_done(
@@ -75,6 +96,7 @@ async def cb_images_done(
 ) -> None:
     data = await state.get_data()
     animal_id = data["animal_id"]
+    animal_slug = data["animal_slug"]
     mode = data["mode"]
     photo_ids: list[str] = data.get("photos", [])
 
@@ -104,7 +126,7 @@ async def cb_images_done(
     except APIError as e:
         await callback.message.edit_text(
             f"❌ Ошибка при загрузке фото: {e.message}",
-            reply_markup=animal_actions_keyboard(animal_id),
+            reply_markup=animal_actions_keyboard(animal_id, animal_slug),
         )
         return
 
@@ -112,26 +134,34 @@ async def cb_images_done(
     verb = "добавлено" if mode == MODE_ADD else "заменено"
     await callback.message.edit_text(
         f"✅ Успешно {verb} {uploaded_count} фото!",
-        reply_markup=animal_actions_keyboard(animal_id),
+        reply_markup=animal_actions_keyboard(animal_id, animal_slug),
     )
 
+
 # ── Cancel ─────────────────────────────────────────────────────────────────────
+
 
 @router.callback_query(StateFilter(ImagesSG), F.data == "cancel")
 async def cb_cancel_images(callback: CallbackQuery, state: FSMContext) -> None:
     data = await state.get_data()
     animal_id = data.get("animal_id")
+    animal_slug = data.get("animal_slug")
     await state.clear()
     await callback.message.edit_text(
         "✅ Загрузка фото отменена.",
-        reply_markup=animal_actions_keyboard(animal_id) if animal_id else None,
+        reply_markup=animal_actions_keyboard(animal_id, animal_slug)
+        if animal_slug
+        else None,
     )
     await callback.answer()
 
+
 # ── Helpers ────────────────────────────────────────────────────────────────────
+
 
 def _done_cancel_keyboard():
     from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+
     return InlineKeyboardMarkup(
         inline_keyboard=[
             [

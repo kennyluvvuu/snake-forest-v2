@@ -12,17 +12,25 @@ def animal_list_keyboard(animals: list[dict]) -> InlineKeyboardMarkup:
     return builder.as_markup()
 
 
-def animal_actions_keyboard(animal_id: str) -> InlineKeyboardMarkup:
+def animal_actions_keyboard(animal_id: str, slug: str) -> InlineKeyboardMarkup:
     """Action buttons shown in animal detail card."""
     return InlineKeyboardMarkup(
         inline_keyboard=[
             [
-                InlineKeyboardButton(text="✏️ Редактировать", callback_data=f"animal:edit:{animal_id}"),
-                InlineKeyboardButton(text="🗑 Удалить", callback_data=f"animal:delete_ask:{animal_id}"),
+                InlineKeyboardButton(
+                    text="✏️ Редактировать", callback_data=f"animal:edit:{slug}"
+                ),
+                InlineKeyboardButton(
+                    text="🗑 Удалить", callback_data=f"animal:delete_ask:{slug}"
+                ),
             ],
             [
-                InlineKeyboardButton(text="📸 Добавить фото", callback_data=f"animal:img_add:{animal_id}"),
-                InlineKeyboardButton(text="🔄 Заменить фото", callback_data=f"animal:img_replace:{animal_id}"),
+                InlineKeyboardButton(
+                    text="📸 Добавить фото", callback_data=f"animal:img_add:{slug}"
+                ),
+                InlineKeyboardButton(
+                    text="🔄 Заменить фото", callback_data=f"animal:img_replace:{slug}"
+                ),
             ],
             [
                 InlineKeyboardButton(text="◀️ К списку", callback_data="animal:list"),
@@ -31,12 +39,17 @@ def animal_actions_keyboard(animal_id: str) -> InlineKeyboardMarkup:
     )
 
 
-def confirm_delete_keyboard(animal_id: str) -> InlineKeyboardMarkup:
+def confirm_delete_keyboard(animal_id: str, slug: str) -> InlineKeyboardMarkup:
     return InlineKeyboardMarkup(
         inline_keyboard=[
             [
-                InlineKeyboardButton(text="✅ Да, удалить", callback_data=f"animal:delete_confirm:{animal_id}"),
-                InlineKeyboardButton(text="❌ Отмена", callback_data=f"animal:view:{animal_id}"),
+                InlineKeyboardButton(
+                    text="✅ Да, удалить",
+                    callback_data=f"animal:delete_confirm:{animal_id}",
+                ),
+                InlineKeyboardButton(
+                    text="❌ Отмена", callback_data=f"animal:view:{slug}"
+                ),
             ]
         ]
     )
@@ -50,7 +63,7 @@ def cancel_keyboard() -> InlineKeyboardMarkup:
     )
 
 
-def edit_fields_keyboard(animal_id: str) -> InlineKeyboardMarkup:
+def edit_fields_keyboard(animal_id: str, slug: str) -> InlineKeyboardMarkup:
     """Choose which field to edit."""
     fields = [
         ("Название", "commonName"),
@@ -64,8 +77,10 @@ def edit_fields_keyboard(animal_id: str) -> InlineKeyboardMarkup:
     ]
     builder = InlineKeyboardBuilder()
     for label, field in fields:
-        builder.button(text=label, callback_data=f"animal:edit_field:{animal_id}:{field}")
-    builder.button(text="◀️ Назад", callback_data=f"animal:view:{animal_id}")
+        builder.button(
+            text=label, callback_data=f"animal:edit_field:{animal_id}:{field}"
+        )
+    builder.button(text="◀️ Назад", callback_data=f"animal:view:{slug}")
     builder.adjust(2)
     return builder.as_markup()
 
@@ -88,23 +103,26 @@ def sex_keyboard(prefix: str) -> InlineKeyboardMarkup:
             [
                 InlineKeyboardButton(text="Самец", callback_data=f"{prefix}:male"),
                 InlineKeyboardButton(text="Самка", callback_data=f"{prefix}:female"),
-                InlineKeyboardButton(text="Неизвестно", callback_data=f"{prefix}:unknown"),
+                InlineKeyboardButton(
+                    text="Неизвестно", callback_data=f"{prefix}:unknown"
+                ),
             ]
         ]
     )
+
 
 def species_keyboard(prefix: str) -> InlineKeyboardMarkup:
     return InlineKeyboardMarkup(
         inline_keyboard=[
             [
-                InlineKeyboardButton(text="Ящерица", callback_data=f'{prefix}:lizard'),
-                InlineKeyboardButton(text="Змея", callback_data=f'{prefix}:snake'),
-                InlineKeyboardButton(text="Черепаха", callback_data=f'{prefix}:turtle'),
+                InlineKeyboardButton(text="Ящерица", callback_data=f"{prefix}:lizard"),
+                InlineKeyboardButton(text="Змея", callback_data=f"{prefix}:snake"),
+                InlineKeyboardButton(text="Черепаха", callback_data=f"{prefix}:turtle"),
             ],
             [
-                InlineKeyboardButton(text="Рыбка", callback_data=f'{prefix}:fish'),
-                InlineKeyboardButton(text="Грызун", callback_data=f'{prefix}:rodent'),
-                InlineKeyboardButton(text="Прочее", callback_data=f'{prefix}:other'),
-            ]
+                InlineKeyboardButton(text="Рыбка", callback_data=f"{prefix}:fish"),
+                InlineKeyboardButton(text="Грызун", callback_data=f"{prefix}:rodent"),
+                InlineKeyboardButton(text="Прочее", callback_data=f"{prefix}:other"),
+            ],
         ]
     )

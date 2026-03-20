@@ -11,11 +11,13 @@ router = Router(name="delete_product")
 
 
 @router.callback_query(F.data.startswith("product:delete_ask:"))
-async def cb_delete_product_ask(callback: CallbackQuery, api_client: httpx.AsyncClient) -> None:
-    product_id = callback.data.split(":", 2)[2]
+async def cb_delete_product_ask(
+    callback: CallbackQuery, api_client: httpx.AsyncClient
+) -> None:
+    slug = callback.data.split(":", 2)[2]
 
     try:
-        product = await get_product(api_client, product_id)
+        product = await get_product(api_client, slug)
     except APIError as e:
         await callback.answer(f"❌ {e.message}", show_alert=True)
         return
@@ -25,13 +27,15 @@ async def cb_delete_product_ask(callback: CallbackQuery, api_client: httpx.Async
         f"{format_product_card(product)}\n\n"
         f"⚠️ Это действие необратимо.",
         parse_mode="HTML",
-        reply_markup=confirm_delete_product_keyboard(product_id),
+        reply_markup=confirm_delete_product_keyboard(product["id"], slug),
     )
     await callback.answer()
 
 
 @router.callback_query(F.data.startswith("product:delete_confirm:"))
-async def cb_delete_product_confirm(callback: CallbackQuery, api_client: httpx.AsyncClient) -> None:
+async def cb_delete_product_confirm(
+    callback: CallbackQuery, api_client: httpx.AsyncClient
+) -> None:
     product_id = callback.data.split(":", 2)[2]
 
     try:

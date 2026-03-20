@@ -11,7 +11,9 @@ router = Router(name="view_product")
 
 
 @router.callback_query(F.data.startswith("product:view:"))
-async def cb_view_product(callback: CallbackQuery, api_client: httpx.AsyncClient) -> None:
+async def cb_view_product(
+    callback: CallbackQuery, api_client: httpx.AsyncClient
+) -> None:
     slug = callback.data.split(":", 2)[2]
     try:
         product = await get_product(api_client, slug)
@@ -20,7 +22,7 @@ async def cb_view_product(callback: CallbackQuery, api_client: httpx.AsyncClient
         return
 
     text = format_product_card(product, full=True)
-    keyboard = product_actions_keyboard(product["id"])
+    keyboard = product_actions_keyboard(product["id"], product["slug"])
 
     try:
         await callback.message.edit_text(text, reply_markup=keyboard, parse_mode="HTML")

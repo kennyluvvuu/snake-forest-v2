@@ -32,19 +32,30 @@ FIELD_LABELS = {
 
 # ── Open field selection menu ──────────────────────────────────────────────────
 
+
 @router.callback_query(F.data.startswith("animal:edit:"))
-async def cb_edit_menu(callback: CallbackQuery, state: FSMContext) -> None:
-    animal_id = callback.data.split(":", 2)[2]
+async def cb_edit_menu(
+    callback: CallbackQuery, state: FSMContext, api_client: httpx.AsyncClient
+) -> None:
+    slug = callback.data.split(":", 2)[2]
+    try:
+        animal = await get_animal(api_client, slug)
+    except APIError as e:
+        await callback.answer(f"❌ {e.message}", show_alert=True)
+        return
+
     await state.set_state(EditAnimalSG.choose_field)
-    await state.update_data(animal_id=animal_id)
+    await state.update_data(animal_id=animal["id"], animal_slug=slug)
     await callback.message.edit_text(
         "✏️ <b>Редактирование.</b> Выберите поле:",
         parse_mode="HTML",
-        reply_markup=edit_fields_keyboard(animal_id),
+        reply_markup=edit_fields_keyboard(animal["id"], slug),
     )
     await callback.answer()
 
+
 # ── Field selected ─────────────────────────────────────────────────────────────
+
 
 @router.callback_query(
     StateFilter(EditAnimalSG.choose_field),
@@ -89,23 +100,33 @@ async def cb_field_selected(callback: CallbackQuery, state: FSMContext) -> None:
         )
     await callback.answer()
 
+
 # ── Enum fields via inline buttons ────────────────────────────────────────────
 
+
 @router.callback_query(EditAnimalSG.enter_age, F.data.startswith("edit:age:"))
-async def cb_edit_age(callback: CallbackQuery, state: FSMContext, api_client: httpx.AsyncClient) -> None:
+async def cb_edit_age(
+    callback: CallbackQuery, state: FSMContext, api_client: httpx.AsyncClient
+) -> None:
     new_value = callback.data.split(":")[-1]
     await _apply_edit(callback, state, api_client, new_value)
 
 
 @router.callback_query(EditAnimalSG.enter_sex, F.data.startswith("edit:sex:"))
-async def cb_edit_sex(callback: CallbackQuery, state: FSMContext, api_client: httpx.AsyncClient) -> None:
+async def cb_edit_sex(
+    callback: CallbackQuery, state: FSMContext, api_client: httpx.AsyncClient
+) -> None:
     new_value = callback.data.split(":")[-1]
     await _apply_edit(callback, state, api_client, new_value)
 
+
 # ── Text fields ────────────────────────────────────────────────────────────────
 
+
 @router.message(EditAnimalSG.enter_value)
-async def msg_edit_value(message: Message, state: FSMContext, api_client: httpx.AsyncClient) -> None:
+async def msg_edit_value(
+    message: Message, state: FSMContext, api_client: httpx.AsyncClient
+) -> None:
     data = await state.get_data()
     field = data["edit_field"]
     raw = message.text.strip()
@@ -116,10 +137,14 @@ async def msg_edit_value(message: Message, state: FSMContext, api_client: httpx.
         return
     if field == "description":
         if len(raw) < 25:
-            await message.answer(f"⚠️ Слишком короткое описание ({len(raw)} симв.), минимум 25:")
+            await message.answer(
+                f"⚠️ Слишком короткое описание ({len(raw)} симв.), минимум 25:"
+            )
             return
         if len(raw) > 500:
-            await message.answer(f"⚠️ Слишком длинное описание ({len(raw)} симв.), максимум 500:")
+            await message.answer(
+                f"⚠️ Слишком длинное описание ({len(raw)} симв.), максимум 500:"
+            )
             return
 
     # Cast numeric fields
@@ -132,7 +157,9 @@ async def msg_edit_value(message: Message, state: FSMContext, api_client: httpx.
 
     await _apply_edit_msg(message, state, api_client, raw)
 
+
 # ── Shared helpers ─────────────────────────────────────────────────────────────
+
 
 async def _apply_edit(
     callback: CallbackQuery,
@@ -142,12 +169,13 @@ async def _apply_edit(
 ) -> None:
     data = await state.get_data()
     animal_id = data["animal_id"]
+    animal_slug = data["animal_slug"]
     field = data["edit_field"]
     await state.clear()
 
     try:
         # Fetch current data to fill all required fields for PUT
-        current = await get_animal(api_client, animal_id)
+        current = await get_animal(api_client, animal_slug)
         payload = _build_payload(current, field, new_value)
         updated = await update_animal(api_client, animal_id, payload)
     except APIError as e:
@@ -159,7 +187,7 @@ async def _apply_edit(
     await callback.message.edit_text(
         f"✅ Поле <b>{FIELD_LABELS.get(field, field)}</b> обновлено!\n\n{text}",
         parse_mode="HTML",
-        reply_markup=animal_actions_keyboard(animal_id),
+        reply_markup=animal_actions_keyboard(animal_id, updated["slug"]),
     )
     await callback.answer("✅ Сохранено")
 
@@ -172,11 +200,12 @@ async def _apply_edit_msg(
 ) -> None:
     data = await state.get_data()
     animal_id = data["animal_id"]
+    animal_slug = data["animal_slug"]
     field = data["edit_field"]
     await state.clear()
 
     try:
-        current = await get_animal(api_client, animal_id)
+        current = await get_animal(api_client, animal_slug)
         payload = _build_payload(current, field, new_value)
         updated = await update_animal(api_client, animal_id, payload)
     except APIError as e:
@@ -187,13 +216,22 @@ async def _apply_edit_msg(
     await message.answer(
         f"✅ Поле <b>{FIELD_LABELS.get(field, field)}</b> обновлено!\n\n{text}",
         parse_mode="HTML",
-        reply_markup=animal_actions_keyboard(animal_id),
+        reply_markup=animal_actions_keyboard(animal_id, updated["slug"]),
     )
 
 
 def _build_payload(current: dict, changed_field: str, new_value) -> dict:
     """Build a full PUT payload from current animal data with one field changed."""
-    fields = ["commonName", "species", "morph", "age", "sex", "priority", "price", "description"]
+    fields = [
+        "commonName",
+        "species",
+        "morph",
+        "age",
+        "sex",
+        "priority",
+        "price",
+        "description",
+    ]
     payload = {f: current[f] for f in fields}
     payload[changed_field] = new_value
     return payload
@@ -201,19 +239,26 @@ def _build_payload(current: dict, changed_field: str, new_value) -> dict:
 
 # ── Cancel from edit state ─────────────────────────────────────────────────────
 
+
 @router.callback_query(StateFilter(EditAnimalSG), F.data == "cancel")
-async def cancel_edit(callback: CallbackQuery, state: FSMContext, api_client: httpx.AsyncClient) -> None:
+async def cancel_edit(
+    callback: CallbackQuery, state: FSMContext, api_client: httpx.AsyncClient
+) -> None:
     data = await state.get_data()
     animal_id = data.get("animal_id")
+    animal_slug = data.get("animal_slug")
     await state.clear()
 
-    if animal_id:
+    if animal_slug:
         try:
-            animal = await get_animal(api_client, animal_id)
+            animal = await get_animal(api_client, animal_slug)
             text = format_animal_card(animal, full=True)
             await callback.message.edit_text(
-                text, parse_mode="HTML", reply_markup=animal_actions_keyboard(animal_id)
+                text,
+                parse_mode="HTML",
+                reply_markup=animal_actions_keyboard(animal_id, animal_slug),
             )
+
         except APIError:
             await callback.message.edit_text("✅ Редактирование отменено.")
     else:
