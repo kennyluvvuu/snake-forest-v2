@@ -43,8 +43,8 @@
     # 6. Frontend (Astro SPA)
     handle {
         root * /var/www/dist
-        try_files {path} /index.html
+        try_files {path} {path}/index.html =404
         file_server
         header Cache-Control "public, max-age=300, no-transform"
-    }
+}
 }
