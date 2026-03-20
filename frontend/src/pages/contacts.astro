@@ -3,22 +3,22 @@ import MainLayout from '../layouts/MainLayout.astro';
 import SiteHeader from '../components/SiteHeader.astro';
 import SiteFooter from '../components/SiteFooter.astro';
 import ContactButtons from '../components/ContactButtons.astro';
+import WriteToUs from '../components/WriteToUs.astro';
 import IconBox from '../components/ui/icon-box.astro';
-import { Mail, Phone, MapPin, Clock } from '@lucide/astro';
+import { Mail, Phone, MapPin } from '@lucide/astro';
 
-const tgLink = import.meta.env.PUBLIC_TG_LINK || 'https://t.me/snakeforest';
-const waLink = import.meta.env.PUBLIC_WA_LINK || 'https://wa.me/79991234567';
 ---
+
 
 <MainLayout title="Контакты | Змеиный лес">
   <SiteHeader slot="header" />
-  
+
   <main class="pt-32 pb-20 px-4">
     <div class="max-w-5xl mx-auto">
       <h1 class="text-5xl md:text-7xl font-serif font-bold text-brand-text mb-12 tracking-tight">
         Контакты
       </h1>
-      
+
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-16">
         <div class="space-y-12">
           <section>
@@ -30,17 +30,17 @@ const waLink = import.meta.env.PUBLIC_WA_LINK || 'https://wa.me/79991234567';
                 </IconBox>
                 <div>
                   <p class="text-brand-text/60 text-sm">Телефон</p>
-                  <a href="tel:+79991234567" class="text-xl font-bold text-brand-text hover:text-brand-accent transition-colors">+7 (999) 123-45-67</a>
+                  <a href="tel:+79950780698" class="text-xl font-bold text-brand-text hover:text-brand-accent transition-colors">+7 (995) 078-06-98</a>
                 </div>
               </div>
-              
+
               <div class="flex items-center gap-6">
                 <IconBox>
                   <Mail class="w-6 h-6" />
                 </IconBox>
                 <div>
                   <p class="text-brand-text/60 text-sm">Email</p>
-                  <a href="mailto:hello@snakeforest.ru" class="text-xl font-bold text-brand-text hover:text-brand-accent transition-colors">hello@snakeforest.ru</a>
+                  <a href="mailto:sergey270307" class="text-xl font-bold text-brand-text hover:text-brand-accent transition-colors">hello@snakeforest.ru</a>
                 </div>
               </div>
             </div>
@@ -55,17 +55,7 @@ const waLink = import.meta.env.PUBLIC_WA_LINK || 'https://wa.me/79991234567';
                 </IconBox>
                 <div>
                   <p class="text-brand-text/60 text-sm">Местоположение</p>
-                  <p class="text-xl font-bold text-brand-text">г. Москва, ул. Лесная, д. 43<br/>(по предварительной записи)</p>
-                </div>
-              </div>
-
-              <div class="flex items-start gap-6">
-                <IconBox>
-                  <Clock class="w-6 h-6" />
-                </IconBox>
-                <div>
-                  <p class="text-brand-text/60 text-sm">Часы работы</p>
-                  <p class="text-xl font-bold text-brand-text">Ежедневно: 10:00 — 21:00</p>
+                  <p class="text-xl font-bold text-brand-text">г. Красноярск, ул. Октябрьская, д. 10Б</p>
                 </div>
               </div>
             </div>
@@ -77,25 +67,7 @@ const waLink = import.meta.env.PUBLIC_WA_LINK || 'https://wa.me/79991234567';
           </section>
         </div>
 
-        <div class="relative group">
-          <div class="absolute inset-0 bg-brand-accent/10 rounded-[2.5rem] transform translate-x-4 translate-y-4 -z-10 group-hover:translate-x-2 group-hover:translate-y-2 transition-transform duration-500"></div>
-          <div class="bg-brand-surface border border-brand-border p-8 md:p-12 rounded-[2.5rem] h-full flex flex-col justify-center">
-            <h3 class="text-3xl font-serif font-bold text-brand-text mb-6">Напишите нам</h3>
-            <p class="text-brand-text/60 text-lg mb-8 leading-relaxed">
-              У вас есть вопросы о наличии животных или нужна помощь в выборе оборудования? Наши специалисты готовы проконсультировать вас в любое время.
-            </p>
-            <div class="space-y-4">
-              <a href={tgLink} class="flex items-center justify-between p-6 bg-brand-text text-brand-bg rounded-2xl font-bold hover:scale-[1.02] transition-transform">
-                Написать в Telegram
-                <span>→</span>
-              </a>
-              <a href={waLink} class="flex items-center justify-between p-6 bg-brand-bg text-brand-text border border-brand-border rounded-2xl font-bold hover:bg-brand-surface transition-colors">
-                Написать в WhatsApp
-                <span>→</span>
-              </a>
-            </div>
-          </div>
-        </div>
+        <WriteToUs />
       </div>
     </div>
   </main>

@@ -39,11 +39,11 @@ const speciesOptions = [
           
           <!-- Tabs -->
           <div class="overflow-x-auto pb-2 scrollbar-hide">
-            <div class="flex gap-2 p-1.5 bg-brand-surface organic-shape-2 border border-brand-border w-max shadow-inner" id="filter-container">
+            <div class="flex gap-2 p-1.5 bg-brand-surface rounded-[2rem] border border-brand-border w-max shadow-inner" id="filter-container">
               {speciesOptions.map(option => (
                 <button 
                   data-filter={option.id}
-                  class={`px-8 py-3 organic-shape-1 text-xs font-black uppercase tracking-[0.2em] transition-all cursor-pointer ${option.id === 'all' ? 'bg-brand-bg text-brand-text shadow-md' : 'text-brand-text/40 hover:text-brand-text'}`}
+                  class={`px-8 py-3 rounded-xl text-xs font-black uppercase tracking-[0.2em] transition-all cursor-pointer ${option.id === 'all' ? 'bg-brand-bg text-brand-text shadow-md' : 'text-brand-text/40 hover:text-brand-text'}`}
                 >
                   {option.label}
                 </button>

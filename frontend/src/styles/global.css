@@ -18,11 +18,35 @@
   --font-sans: "Outfit", system-ui, sans-serif;
 
   --animate-serpentine: serpentine 1s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  --animate-serpentine-hero: serpentine-hero 1.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
 }
 
 @keyframes serpentine {
-  0% { opacity: 0; transform: translateY(30px) skewX(-2deg); }
-  100% { opacity: 1; transform: translateY(0) skewX(0); }
+  0% { 
+    opacity: 0; 
+    transform: translateY(30px) skewX(-2deg); 
+    -webkit-backdrop-filter: blur(0px);
+    backdrop-filter: blur(0px);
+  }
+  100% { 
+    opacity: 1; 
+    transform: translateY(0) skewX(0); 
+  }
+}
+
+@keyframes serpentine-hero {
+  0% { 
+    opacity: 0; 
+    transform: translateY(40px) skewX(-3deg);
+    -webkit-backdrop-filter: blur(0px);
+    backdrop-filter: blur(0px);
+  }
+  100% { 
+    opacity: 1; 
+    transform: translateY(0) skewX(0);
+    -webkit-backdrop-filter: blur(24px);
+    backdrop-filter: blur(24px);
+  }
 }
 
 @layer base {
@@ -66,8 +90,16 @@
     border-radius: 2rem 1.5rem 3rem 1.2rem;
   }
 
+  .organic-shape-1-sm {
+    border-radius: 0.8rem 0.7rem 1rem 0.75rem;
+  }
+
   .organic-shape-2 {
     border-radius: 1.2rem 3rem 1.5rem 2.5rem;
+  }
+
+  .organic-shape-2-sm {
+    border-radius: 0.75rem 1rem 0.7rem 0.8rem;
   }
 }
 

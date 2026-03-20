@@ -4,7 +4,7 @@ import SiteHeader from '../components/SiteHeader.astro';
 import SiteFooter from '../components/SiteFooter.astro';
 import AnimalCard from '../components/AnimalCard.astro';
 import ShopCategoryCard from '../components/ShopCategoryCard.astro';
-import ContactButtons from '../components/ContactButtons.astro';
+import WriteToUs from '../components/WriteToUs.astro';
 import { apiFetch, type Animal } from '@/lib/api.ts';
 
 let latestAnimals: Animal[] = [];
@@ -52,26 +52,28 @@ const shopCategories = [
         class="w-full h-full object-cover"
         loading="eager"
       />
-      <!-- Glassmorphic Overlay for Readability -->
-      <div class="absolute inset-0 bg-brand-bg/70 backdrop-blur-[1px]"></div>
+      <!-- Dark Overlay for Contrast (No Blur) -->
+      <div class="absolute inset-0"></div>
       <!-- Vignette and Gradient for depth -->
       <div class="absolute inset-0 bg-gradient-to-b from-brand-bg/30 via-transparent to-brand-bg"></div>
     </div>
 
-    <div class="max-w-7xl mx-auto text-center relative z-10 animate-serpentine">
-      <h1 class="text-7xl md:text-9xl font-serif font-black text-brand-text mb-6 tracking-tight drop-shadow-sm">
-        Змеиный лес
-      </h1>
-      <p class="text-2xl md:text-2xl text-brand-text/80 mb-12 max-w-2xl mx-auto leading-relaxed font-light">
-        Кураторская коллекция редких рептилий и профессиональное оборудование для создания <span class="font-semibold text-brand-text">биотопа мечты</span>.
-      </p>
-      <div class="flex flex-col sm:flex-row gap-6 justify-center">
-        <a href="/animals" class="bg-brand-text text-brand-bg px-12 py-5 organic-shape-1 font-bold text-xl transition-all hover:scale-105 hover:bg-jungle-deep hover:shadow-2xl active:scale-95">
-          Животные
-        </a>
-        <a href="/shop" class="bg-brand-surface/80 backdrop-blur-md text-brand-text border border-brand-border px-12 py-5 organic-shape-2 font-bold text-xl transition-all hover:scale-105 hover:shadow-2xl active:scale-95">
-          Товары
-        </a>
+    <div class="max-w-7xl mx-auto text-center relative z-10 px-4">
+      <div class="animate-serpentine-hero inline-block bg-brand-bg/40 backdrop-blur-xl p-8 md:p-16 rounded-[2.5rem] md:rounded-[5rem] border border-brand-text/10" style="will-change: transform, opacity, backdrop-filter;">
+        <h1 class="text-6xl md:text-9xl font-serif font-black text-brand-text mb-6 tracking-tight drop-shadow-sm leading-tight">
+          Змеиный лес
+        </h1>
+        <p class="text-xl md:text-2xl text-brand-text/90 mb-12 max-w-2xl mx-auto leading-relaxed font-light">
+          Кураторская коллекция редких рептилий и профессиональное оборудование для создания <span class="font-semibold text-brand-text">биотопа мечты</span>.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-6 justify-center">
+          <a href="/animals" class="bg-brand-text text-brand-bg px-12 py-5 organic-shape-1 font-bold text-xl transition-all hover:scale-105 hover:bg-jungle-deep hover:shadow-2xl active:scale-95">
+            Животные
+          </a>
+          <a href="/shop" class="bg-brand-surface/80 backdrop-blur-md text-brand-text border border-brand-border px-12 py-5 organic-shape-2 font-bold text-xl transition-all hover:scale-105 hover:shadow-2xl active:scale-95">
+            Товары
+          </a>
+        </div>
       </div>
     </div>
   </section>
@@ -135,18 +137,9 @@ const shopCategories = [
     </div>
   </section>
 
-  <section class="py-12 px-4">
-    <div class="max-w-5xl mx-auto bg-brand-surface border border-brand-border organic-shape-1 p-12 md:p-24 text-center relative overflow-hidden shadow-2xl">
-      <div class="relative z-10">
-        <h2 class="text-4xl md:text-6xl font-serif font-black mb-8 text-brand-text">Нужна консультация?</h2>
-        <p class="text-brand-text/70 text-xl mb-12 max-w-xl mx-auto font-light leading-relaxed">
-          Наши эксперты помогут подобрать оборудование и дадут рекомендации по уходу за вашим новым питомцем.
-        </p>
-        <ContactButtons variant="primary" className="justify-center scale-110" />
-      </div>
-      <!-- Abstract Serpentine Shapes -->
-      <div class="absolute -bottom-20 -right-20 w-80 h-80 bg-teal-eye/10 rounded-full blur-[100px]"></div>
-      <div class="absolute -top-20 -left-20 w-80 h-80 bg-brand-accent/10 rounded-full blur-[100px]"></div>
+  <section class="py-24 px-4 bg-brand-bg relative overflow-hidden">
+    <div class="max-w-5xl mx-auto">
+      <WriteToUs />
     </div>
   </section>
 
