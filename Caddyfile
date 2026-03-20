@@ -1,0 +1,50 @@
+:80 {
+    # 1. Limit request body size to 50MB (DDOS protection)
+    request_body {
+        max_size 50MB
+    }
+
+    # 2. Basic Security Headers
+    header {
+        X-Frame-Options "DENY"
+        X-Content-Type-Options "nosniff"
+        Referer-Policy "strict-origin-when-cross-origin"
+        # Hide Caddy server header for stealth
+        -Server
+    }
+
+    # 3. Block common bots and scanners
+    @bad_bots {
+        header_regexp User-Agent "(?i)(curl|wget|python|go-http-client|sqlmap|nikto|apachebench|ahrefsbot|mj12bot|dotbot|rogerbot|exabot|netcrawler)"
+    }
+    handle @bad_bots {
+        abort
+    }
+
+    # 4. Static files: Uploads
+    handle_path /uploads/* {
+        root * /var/www/uploads
+        file_server
+        header Cache-Control "public, max-age=2592000, no-transform"
+    }
+
+    # Legacy static files path
+    handle_path /api/uploads/* {
+        root * /var/www/uploads
+        file_server
+        header Cache-Control "public, max-age=2592000, no-transform"
+    }
+
+    # 5. API Proxy (removes /api/ prefix automatically via handle_path)
+    handle_path /api/* {
+        reverse_proxy backend-bun:8080
+    }
+
+    # 6. Frontend (Astro SPA)
+    handle {
+        root * /var/www/dist
+        try_files {path} /index.html
+        file_server
+        header Cache-Control "public, max-age=300, no-transform"
+    }
+}
