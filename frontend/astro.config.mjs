@@ -9,7 +9,7 @@ export default defineConfig({
     server: {
       proxy: {
         "/uploads": {
-          target: "http://localhost/uploads",
+          target: "http://localhost/",
           changeOrigin: true,
         },
       },

@@ -19,34 +19,33 @@ const typeLabels: Record<string, string> = {
 };
 ---
 
-<a href={`/shop/${product.slug}`} class="group block bg-brand-surface rounded-2xl overflow-hidden border border-brand-border transition-all hover:shadow-xl hover:-translate-y-1">
+<a href={`/shop/${product.slug}`} class="group block bg-brand-surface organic-shape-2 overflow-hidden border border-brand-border transition-all duration-500 hover:shadow-2xl hover:border-brand-accent/40 relative">
   <div class="aspect-square overflow-hidden bg-brand-bg relative">
     <img 
       src={imageUrl} 
       alt={product.name}
       loading={loading}
-      class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+      class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
     />
-    <div class="absolute top-4 left-4">
-      <Badge>{typeLabels[product.type]}</Badge>
+    <div class="absolute top-4 left-4 z-10">
+      <Badge class="organic-shape-1">{typeLabels[product.type]}</Badge>
     </div>
   </div>
   
-  <div class="p-6 sm:p-5 md:p-6 space-y-3">
-    <div>
-      <h3 class="text-xl sm:text-base md:text-xl font-serif font-bold text-brand-text group-hover:text-brand-accent transition-colors leading-tight min-h-[3rem] line-clamp-2">
+  <div class="p-8 space-y-4">
+    <div class="min-h-[4rem]">
+      <h3 class="text-xl font-serif font-black text-brand-text group-hover:text-brand-accent transition-colors duration-300 leading-tight line-clamp-2">
         {product.name}
       </h3>
     </div>
     
     <div class="flex items-center justify-between pt-4 border-t border-brand-border/30">
-      <span class="text-xl sm:text-lg md:text-xl font-black text-brand-text">
-        {product.price.toLocaleString('ru-RU')} <span class="text-sm font-normal opacity-70">₽</span>
+      <span class="text-2xl font-black text-brand-text">
+        {product.price.toLocaleString('ru-RU')} <span class="text-sm font-light opacity-40">₽</span>
       </span>
-      <span class="text-sm font-bold text-brand-accent/80 group-hover:text-brand-accent transition-all flex items-center gap-1">
-        Смотреть
-        <ArrowRight class="w-4 h-4 transition-transform group-hover:translate-x-1" />
-      </span>
+      <div class="w-10 h-10 rounded-full border border-brand-border flex items-center justify-center group-hover:bg-brand-text group-hover:text-brand-bg transition-all duration-500">
+        <ArrowRight class="w-4 h-4" />
+      </div>
     </div>
   </div>
 </a>

@@ -14,18 +14,18 @@ const navLinks = [
 <header id="main-header" class="sticky top-0 z-50 w-full bg-brand-bg/80 backdrop-blur-md border-b border-brand-border px-4 py-4 md:px-8">
   <div class="max-w-7xl mx-auto flex items-center justify-between">
     <a href="/" class="flex items-center group z-50" aria-label="Snake Forest Home">
-      <svg viewBox="0 0 400 60" class="h-8 md:h-12 w-auto fill-brand-text transition-transform group-hover:scale-[1.02]">
-        <text x="10" y="45" font-family="'Playfair Display', serif" font-weight="700" font-size="40">
-          SF
-        </text>
-      </svg>
+      <div class="flex flex-col items-start leading-none">
+        <span class="text-3xl md:text-4xl font-serif font-black tracking-tighter text-brand-text group-hover:text-brand-accent transition-colors">SF</span>
+        <span class="text-[8px] md:text-[10px] font-bold uppercase tracking-[0.4em] text-brand-text/40">Snake Forest</span>
+      </div>
     </a>
 
     <!-- Desktop Navigation -->
-    <nav class="hidden md:flex items-center gap-8">
+    <nav class="hidden md:flex items-center gap-10">
       {navLinks.map(link => (
-        <a href={link.href} class="text-brand-text/80 hover:text-brand-accent transition-colors font-medium">
+        <a href={link.href} class="text-xs font-bold uppercase tracking-[0.2em] text-brand-text/60 hover:text-brand-text transition-all relative group/nav py-2">
           {link.name}
+          <span class="absolute bottom-0 left-0 w-0 h-px bg-brand-accent group-hover/nav:w-full transition-all duration-500"></span>
         </a>
       ))}
     </nav>
@@ -57,14 +57,16 @@ const navLinks = [
   class="fixed inset-0 bg-brand-bg/60 backdrop-blur-2xl z-40 transform translate-x-full transition-transform duration-500 ease-apple md:hidden"
 >
   <div class="flex flex-col h-full pt-24 px-8">
-    <nav class="flex flex-col gap-6">
+    <nav class="flex flex-col gap-10">
       {navLinks.map((link, index) => (
         <a 
           href={link.href} 
-          class="text-4xl font-serif font-bold text-brand-text hover:text-brand-accent transition-all duration-300 opacity-0 transform translate-y-4 nav-link-item"
-          style={`transition-delay: ${index * 50}ms`}
+          class="text-5xl md:text-7xl font-serif font-black text-brand-text hover:text-brand-accent transition-all duration-500 opacity-0 transform translate-y-8 nav-link-item group"
+          style={`transition-delay: ${index * 70}ms`}
         >
-          {link.name}
+          <span class="inline-block group-hover:translate-x-4 transition-transform duration-500">
+            {link.name}
+          </span>
         </a>
       ))}
     </nav>

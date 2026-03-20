@@ -9,19 +9,24 @@ interface Props {
 const { title, description, image, href } = Astro.props;
 ---
 
-<a href={href} class="group relative aspect-[16/10] rounded-2xl overflow-hidden border border-brand-border">
+<a href={href} class="group relative w-full h-full overflow-hidden border border-white/5 transition-all duration-700 block">
   <img 
     src={image} 
     alt={title}
-    class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+    class="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110 filter saturate-[0.8] group-hover:saturate-100"
   />
-  <div class="absolute inset-0 bg-gradient-to-t from-brand-text/90 via-brand-text/40 to-transparent"></div>
-  <div class="absolute inset-0 p-6 flex flex-col justify-end">
-    <h3 class="text-2xl font-serif font-bold text-brand-bg mb-2 group-hover:text-brand-accent transition-colors">
+  <div class="absolute inset-0 bg-gradient-to-t from-jungle-deep via-jungle-deep/20 to-transparent opacity-80 group-hover:opacity-100 transition-opacity"></div>
+  
+  <div class="absolute inset-0 p-10 flex flex-col justify-end translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+    <div class="h-px w-0 group-hover:w-full bg-brand-accent transition-all duration-700 mb-4"></div>
+    <h3 class="text-3xl md:text-4xl font-serif font-black text-brand-bg mb-3 group-hover:text-brand-accent transition-colors drop-shadow-xl">
       {title}
     </h3>
-    <p class="text-brand-bg/80 text-sm leading-relaxed max-w-[200px]">
+    <p class="text-brand-bg/60 text-base leading-relaxed max-w-[280px] font-light opacity-0 group-hover:opacity-100 transition-opacity delay-100 duration-500">
       {description}
     </p>
   </div>
+  
+  <!-- Corner scale accent -->
+  <div class="absolute top-6 right-6 w-10 h-10 border-t border-r border-brand-accent/20 transition-all duration-700 group-hover:top-4 group-hover:right-4 group-hover:border-brand-accent/60"></div>
 </a>

@@ -42,13 +42,13 @@ const shopCategories = [
 
 <MainLayout>
   <SiteHeader slot="header" />
-  
+
   <section class="relative pt-24 pb-20 md:pt-48 md:pb-40 px-4 overflow-hidden flex items-center justify-center min-h-[70vh]">
     <!-- Background Content -->
     <div class="absolute inset-0 z-0 select-none pointer-events-none">
-      <img 
-        src="index_hero.jpg" 
-        alt="Forest Background" 
+      <img
+        src="index_hero.jpg"
+        alt="Forest Background"
         class="w-full h-full object-cover"
         loading="eager"
       />
@@ -58,79 +58,95 @@ const shopCategories = [
       <div class="absolute inset-0 bg-gradient-to-b from-brand-bg/30 via-transparent to-brand-bg"></div>
     </div>
 
-    <div class="max-w-7xl mx-auto text-center relative z-10">
-      <h1 class="text-7xl md:text-9xl font-serif font-bold text-brand-text mb-6 tracking-tight drop-shadow-sm">
-        Змеиный <span class="text-brand-accent italic">лес</span>
+    <div class="max-w-7xl mx-auto text-center relative z-10 animate-serpentine">
+      <h1 class="text-7xl md:text-9xl font-serif font-black text-brand-text mb-6 tracking-tight drop-shadow-sm">
+        Змеиный лес
       </h1>
-      <p class="text-xl md:text-3xl text-brand-text/80 mb-12 max-w-3xl mx-auto leading-relaxed font-medium">
-        Уникальная коллекция экзотических животных и профессиональное оборудование для их содержания.
+      <p class="text-2xl md:text-2xl text-brand-text/80 mb-12 max-w-2xl mx-auto leading-relaxed font-light">
+        Кураторская коллекция редких рептилий и профессиональное оборудование для создания <span class="font-semibold text-brand-text">биотопа мечты</span>.
       </p>
       <div class="flex flex-col sm:flex-row gap-6 justify-center">
-        <a href="/animals" class="bg-brand-text text-brand-bg px-12 py-5 rounded-2xl font-bold text-xl transition-all hover:scale-105 hover:shadow-xl active:scale-95">
+        <a href="/animals" class="bg-brand-text text-brand-bg px-12 py-5 organic-shape-1 font-bold text-xl transition-all hover:scale-105 hover:bg-jungle-deep hover:shadow-2xl active:scale-95">
           Животные
         </a>
-        <a href="/shop" class="bg-brand-surface/80 backdrop-blur-sm text-brand-text border border-brand-border px-12 py-5 rounded-2xl font-bold text-xl transition-all hover:scale-105 hover:shadow-xl active:scale-95">
+        <a href="/shop" class="bg-brand-surface/80 backdrop-blur-md text-brand-text border border-brand-border px-12 py-5 organic-shape-2 font-bold text-xl transition-all hover:scale-105 hover:shadow-2xl active:scale-95">
           Товары
         </a>
       </div>
     </div>
   </section>
 
-  <section class="py-16 px-4 bg-brand-surface/50 border-y border-brand-border">
+  <section class="pt-24 pb-12 px-4 bg-brand-surface/30 relative overflow-hidden">
+    <!-- Decorative vine/snake path placeholder -->
+    <div class="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-brand-accent/30 to-transparent"></div>
+
     <div class="max-w-7xl mx-auto">
-      <div class="flex justify-between items-end mb-10">
+      <div class="flex justify-between items-end mb-16">
         <div>
-          <h2 class="text-3xl md:text-4xl font-serif font-bold text-brand-text mb-2">Новые жители</h2>
-          <p class="text-brand-text/60">Последние пополнения в нашей коллекции</p>
+          <h2 class="text-4xl md:text-5xl font-serif font-black text-brand-text mb-4">Новые жители</h2>
+          <div class="h-1 w-20 bg-brand-accent rounded-full"></div>
         </div>
-        <a href="/animals" class="hidden md:block text-brand-accent font-bold hover:underline">
-          Смотреть всех →
+        <a href="/animals" class="hidden md:flex items-center gap-2 text-brand-text font-bold uppercase tracking-widest text-xs hover:text-brand-accent transition-colors group">
+          Смотреть всех <span class="group-hover:translate-x-1 transition-transform">→</span>
         </a>
       </div>
 
       {error ? (
-        <div class="bg-brand-surface p-8 rounded-2xl border border-brand-border text-center">
+        <div class="bg-brand-surface p-12 organic-shape-1 border border-brand-border text-center shadow-inner">
           <p class="text-brand-text/60 italic">{error}</p>
         </div>
       ) : (
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
           {latestAnimals.length > 0 ? (
-            latestAnimals.map(animal => <AnimalCard animal={animal} />)
+            latestAnimals.map((animal, i) => (
+              <div class="animate-serpentine" style={`animation-delay: ${i * 150}ms`}>
+                <AnimalCard animal={animal} />
+              </div>
+            ))
           ) : (
-            <p class="col-span-full text-center text-brand-text/40 py-12">Животных пока нет в продаже</p>
+            <p class="col-span-full text-center text-brand-text/40 py-20 font-serif italic text-2xl">Животных пока нет в продаже</p>
           )}
         </div>
       )}
-      
-      <div class="mt-8 text-center md:hidden">
-        <a href="/animals" class="inline-block text-brand-accent font-bold py-3 px-6 rounded-lg bg-brand-surface border border-brand-border">
-          Смотреть всех жителей →
-        </a>
+    </div>
+  </section>
+
+  <section class="py-12 px-4 bg-jungle-deep text-brand-bg relative overflow-hidden">
+    <!-- Background scale pattern -->
+    <div class="absolute inset-0 opacity-5 pointer-events-none" style="background-image: radial-gradient(var(--color-brand-accent) 0.5px, transparent 0.5px); background-size: 24px 24px;"></div>
+
+    <div class="max-w-7xl mx-auto relative z-10">
+      <div class="max-w-2xl mb-16">
+        <h2 class="text-4xl md:text-6xl font-serif font-black mb-6 leading-tight">Всё для <span class="text-brand-accent">совершенного</span> террариума</h2>
+        <p class="text-brand-bg/60 text-lg md:text-xl font-light">От высокоточного климат-контроля до аутентичного декора из самого сердца джунглей.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-4 md:grid-rows-2 gap-6 h-[800px] md:h-[600px]">
+        <div class="md:col-span-2 md:row-span-2 relative group overflow-hidden organic-shape-1">
+          <ShopCategoryCard {...shopCategories[0]} />
+        </div>
+        <div class="md:col-span-2 md:row-span-1 relative group overflow-hidden organic-shape-2">
+          <ShopCategoryCard {...shopCategories[1]} />
+        </div>
+        <div class="md:col-span-2 md:row-span-1 relative group overflow-hidden rounded-[3rem]">
+          <ShopCategoryCard {...shopCategories[2]} />
+        </div>
       </div>
     </div>
   </section>
 
-  <section class="py-20 px-4">
-    <div class="max-w-7xl mx-auto">
-      <h2 class="text-3xl md:text-4xl font-serif font-bold text-brand-text mb-10 text-center">Всё для вас и ваших питомцев</h2>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {shopCategories.map(cat => <ShopCategoryCard {...cat} />)}
-      </div>
-    </div>
-  </section>
-
-  <section class="py-20 px-4">
-    <div class="max-w-4xl mx-auto bg-brand-text text-brand-bg rounded-[2rem] p-10 md:p-20 text-center relative overflow-hidden">
+  <section class="py-12 px-4">
+    <div class="max-w-5xl mx-auto bg-brand-surface border border-brand-border organic-shape-1 p-12 md:p-24 text-center relative overflow-hidden shadow-2xl">
       <div class="relative z-10">
-        <h2 class="text-3xl md:text-5xl font-serif font-bold mb-6">Заинтересовал питомец?</h2>
-        <p class="text-brand-bg/70 text-lg mb-10 max-w-xl mx-auto">
-          Мы всегда на связи, чтобы ответить на ваши вопросы и помочь с выбором идеального питомца.
+        <h2 class="text-4xl md:text-6xl font-serif font-black mb-8 text-brand-text">Нужна консультация?</h2>
+        <p class="text-brand-text/70 text-xl mb-12 max-w-xl mx-auto font-light leading-relaxed">
+          Наши эксперты помогут подобрать оборудование и дадут рекомендации по уходу за вашим новым питомцем.
         </p>
-        <ContactButtons variant="primary" className="justify-center" />
+        <ContactButtons variant="primary" className="justify-center scale-110" />
       </div>
-      <!-- Accent shape -->
-      <div class="absolute -bottom-20 -right-20 w-64 h-64 bg-brand-accent/20 rounded-full blur-3xl"></div>
-      <div class="absolute -top-20 -left-20 w-64 h-64 bg-brand-accent/10 rounded-full blur-3xl"></div>
+      <!-- Abstract Serpentine Shapes -->
+      <div class="absolute -bottom-20 -right-20 w-80 h-80 bg-teal-eye/10 rounded-full blur-[100px]"></div>
+      <div class="absolute -top-20 -left-20 w-80 h-80 bg-brand-accent/10 rounded-full blur-[100px]"></div>
     </div>
   </section>
 
