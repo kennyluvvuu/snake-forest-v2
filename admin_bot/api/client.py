@@ -15,7 +15,6 @@ def build_client() -> httpx.AsyncClient:
         base_url=settings.api_base_url,
         headers={
             "X-API-Key": settings.api_key,
-            "Content-Type": "application/json",
         },
         timeout=90.0,
     )
